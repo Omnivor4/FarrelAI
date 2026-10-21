@@ -25,6 +25,22 @@
   gap: 12px;
 }
 
+.brand-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: inline-block;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+}
+
+.brand-name {
+  color: #f0f0f2;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+
 .admin-badge {
   background: rgba(152, 171, 195, 0.2);
   color: var(--text-serif-accent);
