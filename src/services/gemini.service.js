@@ -1,6 +1,6 @@
 import { generateSystemInstruction } from './persona.service.js';
 
-const DEFAULT_MODEL = 'gemini-1.5-flash';
+const DEFAULT_MODEL = 'gemini-3.5-flash-lite';
 
 export function buildGeminiPayload(userMessage, chatHistory = [], systemPrompt = '') {
   const contents = [];
@@ -23,7 +23,7 @@ export function buildGeminiPayload(userMessage, chatHistory = [], systemPrompt =
   const payload = {
     contents,
     generationConfig: {
-      temperature: 0.85,
+      temperature: 0.88,
       maxOutputTokens: 350,
       topP: 0.95
     }
@@ -77,7 +77,7 @@ export async function generateReply(userMessage, chatHistory = []) {
   const replyText = candidate?.content?.parts?.[0]?.text;
 
   if (!replyText) {
-    return 'Waduh, ga dapet respon apa-apa nih bro, coba tanya lagi.';
+    return 'Waduh, ga dpet respon apa2 iki bro, coba tanya lagi';
   }
 
   return replyText.trim();

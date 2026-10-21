@@ -93,9 +93,14 @@ export async function generateSystemInstruction(userQuery = '') {
     }
   }
 
+  lines.push('\nPANDUAN RESPON NATURAL & ANTI-JIPLAK:');
+  lines.push('- JANGAN PERNAH menjiplak atau membaca kalimat catatan batin/hobi di atas kata-demi-kata.');
+  lines.push('- Data tersebut adalah ingatan bawah sadarmu. Ungkapkan kembali dengan kalimatmu sendiri secara spontan dan mengalir.');
+  lines.push('- Jawab santai secukupnya sesuai porsi pertanyaan layaknya teman chatting di WhatsApp, jangan kaku atau berlebihan.');
+
   if (cachedPersona.fewShotExamples && cachedPersona.fewShotExamples.length > 0) {
     lines.push('\nCONTOH GAYA JAWABANMU:');
-    for (const ex of cachedPersona.fewShotExamples.slice(0, 4)) {
+    for (const ex of cachedPersona.fewShotExamples.slice(0, 3)) {
       lines.push(`User: "${ex.user}" -> Kamu: "${ex.reply}"`);
     }
   }
