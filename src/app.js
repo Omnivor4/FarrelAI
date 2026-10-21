@@ -24,8 +24,12 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api', apiRoutes);
 
-app.get('/admin', (req, res) => {
+app.get('/farrelai', (req, res) => {
   res.sendFile(path.join(PUBLIC_DIR, 'admin.html'));
+});
+
+app.get('/admin', (req, res) => {
+  res.redirect('/farrelai');
 });
 
 app.get('/', (req, res) => {

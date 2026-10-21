@@ -74,3 +74,16 @@ test('API: /api/admin/stats allows authorized access with header', async () => {
   assert.equal(data.success, true);
   assert.ok(data.stats, 'Should return stats object');
 });
+
+test('UI: /farrelai serves admin dashboard', async () => {
+  const res = await fetch(`${baseUrl}/farrelai`);
+  assert.equal(res.status, 200);
+  const text = await res.text();
+  assert.ok(text.includes('Dasbor Admin') || text.includes('admin.js'));
+});
+
+test('UI: /admin redirects to /farrelai', async () => {
+  const res = await fetch(`${baseUrl}/admin`, { redirect: 'manual' });
+  assert.equal(res.status, 302);
+  assert.equal(res.headers.get('location'), '/farrelai');
+});

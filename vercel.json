@@ -2,6 +2,10 @@
   "version": 2,
   "rewrites": [
     {
+      "source": "/farrelai",
+      "destination": "/admin.html"
+    },
+    {
       "source": "/admin",
       "destination": "/admin.html"
     },
