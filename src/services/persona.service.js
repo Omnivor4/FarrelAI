@@ -69,11 +69,27 @@ export async function generateSystemInstruction(userQuery = '') {
       }
     }
 
+    if (cachedMind.hobi_dan_kesukaan && (lowerQuery.includes('hobi') || lowerQuery.includes('suka') || lowerQuery.includes('makan') || lowerQuery.includes('masak') || lowerQuery.includes('favorit'))) {
+      for (const hobi of cachedMind.hobi_dan_kesukaan) {
+        matchedThoughts.push(`[Hobi/Kesukaan] ${hobi}`);
+      }
+    }
+
+    if (cachedMind.prinsip_dan_sifat && userQuery) {
+      const words = lowerQuery.split(/\s+/).filter(w => w.length > 3);
+      for (const trait of cachedMind.prinsip_dan_sifat) {
+        if (words.some(w => trait.toLowerCase().includes(w)) && matchedThoughts.length < 4) {
+          matchedThoughts.push(`[Karakter] ${trait}`);
+        }
+      }
+    }
+
     if (matchedThoughts.length > 0) {
       lines.push('\nISI PIKIRAN TERKAIT TOPIK INI:');
-      matchedThoughts.forEach(t => lines.push(`- ${t}`));
+      matchedThoughts.slice(0, 4).forEach(t => lines.push(`- ${t}`));
     } else if (cachedMind.prinsip_dan_sifat && cachedMind.prinsip_dan_sifat.length > 0) {
-      lines.push(`\nPRINSIP UTAMA: ${cachedMind.prinsip_dan_sifat[0]}`);
+      lines.push('\nPRINSIP & SIFAT UTAMA:');
+      cachedMind.prinsip_dan_sifat.slice(0, 2).forEach(p => lines.push(`- ${p}`));
     }
   }
 
