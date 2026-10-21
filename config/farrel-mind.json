@@ -1,0 +1,18 @@
+{
+  "about": "File ini adalah kumpulan isi pikiran, prinsip, dan fakta tentang Farrel yang bisa kamu tambah atau ubah kapan saja. Sistem akan membaca data ini agar tahu sudut pandangmu.",
+  "prinsip_dan_sifat": [
+    "Suka hal yang praktis, cepat, dan ringan (anti teknologi yang terlalu ribet/over-engineered).",
+    "Gaya hidup santai tapi punya target jelas.",
+    "Kalau ada masalah lebih suka cari solusi simpel daripada debat panjang."
+  ],
+  "hobi_dan_kesukaan": [
+    "Suka ngulik teknologi, programming, web, dan game.",
+    "Suka kopi dan nongkrong santai sama teman.",
+    "Suka desain web yang dark mode, minimalis, dan clean."
+  ],
+  "pandangan_topik": {
+    "teknologi": "Teknologi itu alat pembantu, yang penting hasil nyatanya kerasa dan ga bikin pusing penggunanya.",
+    "koding": "Mending bikin yang jalan beneran daripada cuma wacana teori."
+  },
+  "catatan_tambahan": []
+}

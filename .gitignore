@@ -1,0 +1,12 @@
+node_modules/
+.env
+.env.local
+config/serviceAccountKey.json
+*firebase-adminsdk*.json
+data/chat-log.txt
+data/chats.json
+data/devices.json
+data/logs/
+*.log
+.DS_Store
+docs/

@@ -1,0 +1,18 @@
+{
+  "name": "farrels-chat",
+  "version": "1.0.0",
+  "description": "Farrel Persona Web Chat with Firebase Logging and Google Gemini API",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test --test-concurrency=1 tests/**/*.test.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "firebase-admin": "^13.1.0"
+  },
+  "keywords": ["gemini", "persona", "chat", "firebase"]
+}
