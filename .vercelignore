@@ -1,3 +1,7 @@
 .env
+.env.local
 tests
-data/chat-log.txt
+data
+config/serviceAccountKey.json
+*firebase-adminsdk*.json
+scripts/clean-db.js
