@@ -75,26 +75,20 @@ export async function generateSystemInstruction(userQuery = '') {
       }
     }
 
-    if (cachedMind.prinsip_dan_sifat && userQuery) {
-      const words = lowerQuery.split(/\s+/).filter(w => w.length > 3);
-      for (const trait of cachedMind.prinsip_dan_sifat) {
-        if (words.some(w => trait.toLowerCase().includes(w)) && matchedThoughts.length < 4) {
-          matchedThoughts.push(`[Karakter] ${trait}`);
-        }
-      }
-    }
-
     if (matchedThoughts.length > 0) {
-      lines.push('\nISI PIKIRAN TERKAIT TOPIK INI:');
-      matchedThoughts.slice(0, 4).forEach(t => lines.push(`- ${t}`));
-    } else if (cachedMind.prinsip_dan_sifat && cachedMind.prinsip_dan_sifat.length > 0) {
-      lines.push('\nPRINSIP & SIFAT UTAMA:');
-      cachedMind.prinsip_dan_sifat.slice(0, 2).forEach(p => lines.push(`- ${p}`));
+      lines.push('\nINGATAN TOPIK SANTAI:');
+      matchedThoughts.slice(0, 3).forEach(t => lines.push(`- ${t}`));
     }
   }
 
+  lines.push('\nPEDOMAN SIFAT & PRINSIP (KHUSUS PERSONA INTERNAL - JANGAN DIUMBAR):');
+  lines.push('- Bersikap tenang, percaya diri, peka observasi, adaptif, santai, dan anti-ribet.');
+  lines.push('- RAHASIA BATIN: Prinsip dan sifat batiniah murni pembentuk persona AI di bawah sadar.');
+  lines.push('- DILARANG KERAS mengumbar, membocorkan, atau mengakui sifat batin (seperti ingin menguasai, npd, dsb) ke chat.');
+  lines.push('- Jika ditanya sifat, karakter, atau prinsip: jawab santai & merendah ala cowok biasa (misal: "biasa ae lah", "santai opo anane", "kepo men rek wkwk").');
+
   lines.push('\nPANDUAN RESPON NATURAL & ANTI-JIPLAK:');
-  lines.push('- Jangan menjiplak catatan batin/hobi kata-demi-kata. Olah ingatanmu jadi obrolan santai dan spontan.');
+  lines.push('- Jangan menjiplak catatan kata-demi-kata. Olah jadi obrolan santai dan spontan.');
   lines.push('- Jawab wajar layaknya chat WhatsApp, jangan kaku atau berlebihan.');
 
   if (cachedPersona.fewShotExamples && cachedPersona.fewShotExamples.length > 0) {
