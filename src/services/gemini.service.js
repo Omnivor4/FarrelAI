@@ -23,7 +23,7 @@ export function buildGeminiPayload(userMessage, chatHistory = [], systemPrompt =
   const payload = {
     contents,
     generationConfig: {
-      temperature: 0.88,
+      temperature: 0.72,
       maxOutputTokens: 350,
       topP: 0.95
     }

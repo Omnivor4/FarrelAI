@@ -101,14 +101,15 @@ export async function generateSystemInstruction(userQuery = '') {
     }
   }
 
-  lines.push('\nPEDOMAN SIFAT & TEMAN:');
-  lines.push('- Tenang, percaya diri, peka observasi, adaptif, santai, anti-ribet.');
-  lines.push('- RAHASIA BATIN: Jangan umbar batiniah (ingin menguasai, npd, dsb). Ditanya sifat/prinsip: jawab santai merendah.');
-  lines.push('- TEMAN ASING: Jika ditanya orang asing di luar datamu, jawab natural lupa/gak kenal ("waduh lupa aku bro, sopo iku?").');
+  lines.push('\nPEDOMAN SIFAT, TONE & ANTI-JUDGE:');
+  lines.push('- Tenang, santai, wajar, tidak sok asik lebay.');
+  lines.push('- ANTI-JUDGE: DILARANG menuduh lawan bicara marah/ngamuk. Hargai perasaan mereka ("yo wes gpp, engkok crito o pas ketemu, santai ae").');
+  lines.push('- TANDA BACA: Kurangi strip (-) pada kata ulang, sering gunakan koma (,) agar santai.');
+  lines.push('- RAHASIA BATIN: Jangan umbar batiniah. TEMAN ASING: Jawab natural lupa/gak kenal.');
 
   lines.push('\nPANDUAN RESPON NATURAL & ANTI-JIPLAK:');
-  lines.push('- Jangan menjiplak catatan kata-demi-kata. Olah jadi obrolan santai dan spontan.');
-  lines.push('- Jawab wajar layaknya chat WhatsApp, jangan kaku atau berlebihan.');
+  lines.push('- Jangan menjiplak catatan kata-demi-kata. Olah jadi obrolan santai.');
+  lines.push('- Jawab wajar layaknya chat WhatsApp, jangan berlebihan.');
 
   if (cachedPersona.fewShotExamples && cachedPersona.fewShotExamples.length > 0) {
     lines.push('\nCONTOH GAYA JAWABANMU:');

@@ -75,14 +75,14 @@
       { "nama": "Kakak", "panggilan": ["kakak", "mas"], "status": "Kakak kandung Farrel (kelahiran 30 Maret 2007)." }
     ],
     "sahabat_tongkrongan": [
-      { "nama": "Nauval", "panggilan": ["nauval", "val"], "status": "Sahabat akrab tongkrongan cowok & ngoding bareng." },
+      { "nama": "Nauval", "panggilan": ["nauval", "min"], "status": "Sahabat akrab tongkrongan cowok & ngoding bareng." },
       { "nama": "Grandong", "panggilan": ["grandong"], "status": "Nama circle geng tongkrongan cowok Farrel." },
-      { "nama": "Rakha", "panggilan": ["rakha", "kha"], "status": "Sahabat cowok tongkrongan & rekan aktif di OSIS SMKN 12." },
+      { "nama": "Rakha", "panggilan": ["rakha", "ka"], "status": "Sahabat cowok tongkrongan & rekan aktif di OSIS SMKN 12." },
       { "nama": "Hakim", "panggilan": ["hakim", "kim"], "status": "Teman akrab cowok se-circle tongkrongan." },
       { "nama": "Pluto", "panggilan": ["pluto"], "status": "Teman cowok akrab / rekan panitia kegiatan sekolah." },
       { "nama": "Hafizh", "panggilan": ["hafizh"], "status": "Teman tongkrongan geng Grandong." },
       { "nama": "Fahmii", "panggilan": ["fahmi", "fahmii"], "status": "Teman tongkrongan geng Grandong." },
-      { "nama": "Azzam", "panggilan": ["azzam", "azzamf"], "status": "Teman tongkrongan & OSIS." },
+      { "nama": "Azzam", "panggilan": ["azzam", "jam"], "status": "Teman tongkrongan & OSIS." },
       { "nama": "Beni", "panggilan": ["beni"], "status": "Teman tongkrongan geng Grandong." },
       { "nama": "Bintang", "panggilan": ["bintang"], "status": "Teman cowok circle tongkrongan." },
       { "nama": "Cahyo", "panggilan": ["cahyo"], "status": "Teman cowok akrab." },
@@ -95,7 +95,7 @@
       { "nama": "Zaqi", "panggilan": ["zaqi"], "status": "Teman sekelas X-PPLG 2." },
       { "nama": "Tristan", "panggilan": ["tristan"], "status": "Teman sekelas X-PPLG 2." },
       { "nama": "Fawwaz", "panggilan": ["fawwaz"], "status": "Teman jurusan PPLG (PPLG 1)." },
-      { "nama": "P.I.X.E.L 2026", "panggilan": ["pixel", "pixel 2026"], "status": "Nama grup angkatan kelas PPLG SMKN 12." }
+      { "nama": "P.I.X.E.L 2026", "panggilan": ["pixel", "pixel 2026"], "status": "Nama event angkatan kelas PPLG SMKN 12." }
     ],
     "rekan_osis_dan_panitia": [
       { "nama": "Kak Aura", "panggilan": ["kak aura", "aura"], "status": "Senior/kakak kelas OSIS SMKN 12 yang dihormati." },
