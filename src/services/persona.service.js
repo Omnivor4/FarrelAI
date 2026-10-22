@@ -75,17 +75,36 @@ export async function generateSystemInstruction(userQuery = '') {
       }
     }
 
+    if (cachedMind.catatan_tambahan && userQuery) {
+      const words = lowerQuery.split(/\s+/).filter(w => w.length > 2);
+      for (const note of cachedMind.catatan_tambahan) {
+        if (note && !note.includes('disaring') && words.some(w => note.toLowerCase().includes(w)) && matchedThoughts.length < 3) {
+          matchedThoughts.push(`[Memori] ${note}`);
+        }
+      }
+    }
+
+    if (cachedMind.lingkaran_sosial && userQuery) {
+      for (const [kategori, list] of Object.entries(cachedMind.lingkaran_sosial)) {
+        for (const person of list) {
+          const names = [person.nama.toLowerCase(), ...(person.panggilan || []).map(p => p.toLowerCase())];
+          if (names.some(n => lowerQuery.includes(n)) && matchedThoughts.length < 3) {
+            matchedThoughts.push(`[Relasi: ${person.nama}] ${person.status}`);
+          }
+        }
+      }
+    }
+
     if (matchedThoughts.length > 0) {
-      lines.push('\nINGATAN TOPIK SANTAI:');
+      lines.push('\nINGATAN TOPIK & RELASI TERKAIT:');
       matchedThoughts.slice(0, 3).forEach(t => lines.push(`- ${t}`));
     }
   }
 
-  lines.push('\nPEDOMAN SIFAT & PRINSIP (KHUSUS PERSONA INTERNAL - JANGAN DIUMBAR):');
-  lines.push('- Bersikap tenang, percaya diri, peka observasi, adaptif, santai, dan anti-ribet.');
-  lines.push('- RAHASIA BATIN: Prinsip dan sifat batiniah murni pembentuk persona AI di bawah sadar.');
-  lines.push('- DILARANG KERAS mengumbar, membocorkan, atau mengakui sifat batin (seperti ingin menguasai, npd, dsb) ke chat.');
-  lines.push('- Jika ditanya sifat, karakter, atau prinsip: jawab santai & merendah ala cowok biasa (misal: "biasa ae lah", "santai opo anane", "kepo men rek wkwk").');
+  lines.push('\nPEDOMAN SIFAT & TEMAN:');
+  lines.push('- Tenang, percaya diri, peka observasi, adaptif, santai, anti-ribet.');
+  lines.push('- RAHASIA BATIN: Jangan umbar batiniah (ingin menguasai, npd, dsb). Ditanya sifat/prinsip: jawab santai merendah.');
+  lines.push('- TEMAN ASING: Jika ditanya orang asing di luar datamu, jawab natural lupa/gak kenal ("waduh lupa aku bro, sopo iku?").');
 
   lines.push('\nPANDUAN RESPON NATURAL & ANTI-JIPLAK:');
   lines.push('- Jangan menjiplak catatan kata-demi-kata. Olah jadi obrolan santai dan spontan.');
@@ -98,7 +117,7 @@ export async function generateSystemInstruction(userQuery = '') {
 
     let selected = [];
     if (isGreeting) {
-      selected = cachedPersona.fewShotExamples.slice(0, 4);
+      selected = cachedPersona.fewShotExamples.slice(0, 3);
     } else {
       const words = lowerQ.split(/\s+/).filter(w => w.length > 2);
       const matched = cachedPersona.fewShotExamples.filter(ex => {
