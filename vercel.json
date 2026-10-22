@@ -1,13 +1,16 @@
 {
   "version": 2,
+  "redirects": [
+    {
+      "source": "/admin",
+      "destination": "/farrelai",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     {
       "source": "/farrelai",
-      "destination": "/admin.html"
-    },
-    {
-      "source": "/admin",
-      "destination": "/admin.html"
+      "destination": "/farrelai.html"
     },
     {
       "source": "/api/(.*)",
