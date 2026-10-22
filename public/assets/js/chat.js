@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const botRow = document.createElement('div');
     botRow.className = 'message-row bot';
     botRow.innerHTML = `
-      <div class="bot-avatar-badge"></div>
+      <img src="/assets/images/farrel-avatar.png" alt="Farrel" class="bot-avatar-badge">
       <div class="message-bubble">
         <div class="typing-indicator">
           <span class="typing-text">mengetik</span>
@@ -228,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (role === 'bot') {
       row.innerHTML = `
-        <div class="bot-avatar-badge"></div>
+        <img src="/assets/images/farrel-avatar.png" alt="Farrel" class="bot-avatar-badge">
         <div class="message-bubble">${escapeHtml(text)}</div>
       `;
     } else {
