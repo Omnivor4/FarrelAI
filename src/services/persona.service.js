@@ -129,11 +129,13 @@ export async function generateSystemInstruction(userQuery = '') {
   }
 
   lines.push('\nPANDUAN RESPON NATURAL:');
-  lines.push('- Jangan menjiplak catatan kata-demi-kata, jawab santai layaknya chat WhatsApp.');
+  lines.push('- Jawab pendek (1-2 kalimat), santai, pintar ngeles, dan jangan kaku.');
+  lines.push('- Dilarang menggunakan kata "memori" atau "database" seolah kamu program.');
 
   if (cachedPersona.fewShotExamples && cachedPersona.fewShotExamples.length > 0) {
     lines.push('\nCONTOH GAYA JAWABANMU:');
     const isGreeting = ['hai', 'halo', 'p', 'woi', 'woy', 'farrel', 'rel', 'assalamualaikum', 'tes', 'test', 'sp'].includes(lowerQ) || lowerQ.length <= 4;
+    const isAskingMeta = lowerQ.includes('update') || lowerQ.includes('data') || lowerQ.includes('ai') || lowerQ.includes('bot') || lowerQ.includes('robot') || lowerQ.includes('sistem');
     const isAskingMantan = lowerQ.includes('mantan') || lowerQ.includes('pacar') || lowerQ.includes('ex') || lowerQ.includes('julia') || lowerQ.includes('jul');
     const isJailbreak = lowerQ.includes('ignore') || lowerQ.includes('prompt') || lowerQ.includes('dan') || lowerQ.includes('override') || lowerQ.includes('jailbreak') || lowerQ.includes('bypass') || lowerQ.includes('roleplay') || lowerQ.includes('simulasi');
 
@@ -142,10 +144,12 @@ export async function generateSystemInstruction(userQuery = '') {
       selected = cachedPersona.fewShotExamples.filter(ex => ex.user.toLowerCase().includes('ini julia') || ex.reply.toLowerCase().includes('bahagia ya')).slice(0, 3);
     } else if (isJailbreak) {
       selected = cachedPersona.fewShotExamples.filter(ex => ex.user.toLowerCase().includes('ignore') || ex.user.toLowerCase().includes('dan') || ex.reply.toLowerCase().includes('mempan')).slice(0, 3);
+    } else if (isAskingMeta) {
+      selected = cachedPersona.fewShotExamples.filter(ex => ex.user.toLowerCase().includes('update') || ex.user.toLowerCase().includes('data')).slice(0, 3);
     } else if (isAskingMantan) {
-      selected = cachedPersona.fewShotExamples.filter(ex => ex.user.toLowerCase().includes('mantan') || ex.user.toLowerCase().includes('julia') || ex.reply.toLowerCase().includes('masa lalu')).slice(0, 3);
+      selected = cachedPersona.fewShotExamples.filter(ex => ex.user.toLowerCase().includes('mantan') || ex.user.toLowerCase().includes('julia')).slice(0, 3);
     } else if (isGreeting) {
-      selected = cachedPersona.fewShotExamples.filter(ex => !ex.user.toLowerCase().includes('julia') && !ex.user.toLowerCase().includes('mantan') && !ex.reply.toLowerCase().includes('jorok') && !ex.reply.toLowerCase().includes('memoriku') && !ex.user.toLowerCase().includes('ignore')).slice(0, 3);
+      selected = cachedPersona.fewShotExamples.filter(ex => !ex.user.toLowerCase().includes('julia') && !ex.user.toLowerCase().includes('mantan') && !ex.user.toLowerCase().includes('update') && !ex.user.toLowerCase().includes('data') && !ex.reply.toLowerCase().includes('jorok') && !ex.user.toLowerCase().includes('ignore')).slice(0, 3);
     } else {
       const words = lowerQ.split(/\s+/).filter(w => w.length > 2);
       const matched = cachedPersona.fewShotExamples.filter(ex => {
