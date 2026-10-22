@@ -94,13 +94,29 @@ export async function generateSystemInstruction(userQuery = '') {
   }
 
   lines.push('\nPANDUAN RESPON NATURAL & ANTI-JIPLAK:');
-  lines.push('- JANGAN PERNAH menjiplak atau membaca kalimat catatan batin/hobi di atas kata-demi-kata.');
-  lines.push('- Data tersebut adalah ingatan bawah sadarmu. Ungkapkan kembali dengan kalimatmu sendiri secara spontan dan mengalir.');
-  lines.push('- Jawab santai secukupnya sesuai porsi pertanyaan layaknya teman chatting di WhatsApp, jangan kaku atau berlebihan.');
+  lines.push('- Jangan menjiplak catatan batin/hobi kata-demi-kata. Olah ingatanmu jadi obrolan santai dan spontan.');
+  lines.push('- Jawab wajar layaknya chat WhatsApp, jangan kaku atau berlebihan.');
 
   if (cachedPersona.fewShotExamples && cachedPersona.fewShotExamples.length > 0) {
     lines.push('\nCONTOH GAYA JAWABANMU:');
-    for (const ex of cachedPersona.fewShotExamples.slice(0, 3)) {
+    const lowerQ = userQuery.toLowerCase().trim();
+    const isGreeting = ['hai', 'halo', 'p', 'woi', 'woy', 'farrel', 'rel', 'assalamualaikum', 'tes', 'test', 'sp'].includes(lowerQ) || lowerQ.length <= 4;
+
+    let selected = [];
+    if (isGreeting) {
+      selected = cachedPersona.fewShotExamples.slice(0, 4);
+    } else {
+      const words = lowerQ.split(/\s+/).filter(w => w.length > 2);
+      const matched = cachedPersona.fewShotExamples.filter(ex => {
+        return words.some(w => ex.user.toLowerCase().includes(w) || ex.reply.toLowerCase().includes(w));
+      });
+      selected = matched.slice(0, 3);
+      if (selected.length < 3) {
+        selected = [...selected, ...cachedPersona.fewShotExamples.slice(14, 14 + (3 - selected.length))];
+      }
+    }
+
+    for (const ex of selected) {
       lines.push(`User: "${ex.user}" -> Kamu: "${ex.reply}"`);
     }
   }
