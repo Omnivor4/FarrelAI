@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let isGenerating = false;
   let autoScrollActive = true;
   let currentAbortController = null;
+  let submitTimestamp = 0;
 
   function getScrollPosition() {
     return Math.max(
@@ -140,6 +141,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function handleStop() {
+    if (Date.now() - submitTimestamp < 450) {
+      return;
+    }
     if (currentAbortController) {
       currentAbortController.abort();
     }
@@ -164,6 +168,8 @@ document.addEventListener('DOMContentLoaded', () => {
   async function handleSubmit() {
     const text = chatInput.value.trim();
     if (!text || isGenerating) return;
+
+    submitTimestamp = Date.now();
 
     if (conversationHistory.length === 0) {
       heroWrapper.classList.add('hidden');
@@ -226,9 +232,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       await streamText(bubbleContent, reply, 12, currentAbortController.signal);
 
-      if (currentAbortController.signal.aborted) {
+      if (currentAbortController?.signal?.aborted) {
         if (conversationHistory.length > 0 && conversationHistory[conversationHistory.length - 1].role === 'model') {
-          conversationHistory[conversationHistory.length - 1].text = bubbleContent.textContent || 'obrolan dihentikan.';
+          conversationHistory[conversationHistory.length - 1].text = bubbleContent.textContent;
         }
       }
 
@@ -242,8 +248,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (typingIndicator) typingIndicator.remove();
       typingCursor.style.display = 'inline-block';
       if (err.name === 'AbortError' || currentAbortController?.signal?.aborted) {
-        if (!bubbleContent.textContent) {
-          bubbleContent.textContent = 'obrolan dihentikan.';
+        if (!bubbleContent.textContent.trim()) {
+          botRow.remove();
         }
       } else if (/quota|exhausted|rate limit|too many requests|tokens|429/i.test(err.message)) {
         bubbleContent.textContent = 'yailah token e habis, tunggu besok ya atau ngga nanti malem sapa tau ws reset';
