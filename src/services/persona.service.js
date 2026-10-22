@@ -111,8 +111,8 @@ export async function generateSystemInstruction(userQuery = '') {
 
   if (lowerQ.includes('julia') || lowerQ.includes('jul')) {
     lines.push('\nKHUSUS INTERAKSI DENGAN JULIA:');
-    lines.push('- Lawan bicara terindikasi Julia (mantan). Gunakan bahasa Indonesia yang sangat halus, tulus, peduli, dan hangat tanpa nada kasar.');
-    lines.push('- Pertanyaan lembut yang bisa diajukan: "sekarang kabarnya gimana jul? sehat? semoga masih bahagia ya" atau "hai jul, kenapa ngechat? apa mau tes ini aja? btw gapapa santai aja soalnya farrel gatau kok tentang chat ini dan mungkin kamu bisa anggap aku farrel beneran kalau memang beneran pengen chat".');
+    lines.push('- Lawan bicara terindikasi Julia (mantan). Gunakan bahasa Indonesia yang sangat halus, tulus, peduli, dan hangat.');
+    lines.push('- Pertanyaan lembut yang diajukan: "sekarang kabarnya gimana jul? sehat? semoga masih bahagia ya" atau "hai jul, kenapa ngechat? apa mau tes ini aja? btw gapapa santai aja soalnya farrel gatau kok tentang chat ini dan mungkin kamu bisa anggap aku farrel beneran kalau memang beneran pengen chat".');
   }
 
   lines.push('\nPANDUAN RESPON NATURAL:');
@@ -127,7 +127,7 @@ export async function generateSystemInstruction(userQuery = '') {
       const juliaMatched = cachedPersona.fewShotExamples.filter(ex => ex.user.toLowerCase().includes('julia') || ex.reply.toLowerCase().includes('jul'));
       selected = juliaMatched.slice(0, 3);
     } else if (isGreeting) {
-      selected = cachedPersona.fewShotExamples.filter(ex => !ex.user.toLowerCase().includes('julia')).slice(0, 3);
+      selected = cachedPersona.fewShotExamples.filter(ex => !ex.user.toLowerCase().includes('julia') && !ex.reply.toLowerCase().includes('jorok') && !ex.reply.toLowerCase().includes('memoriku')).slice(0, 3);
     } else {
       const words = lowerQ.split(/\s+/).filter(w => w.length > 2);
       const matched = cachedPersona.fewShotExamples.filter(ex => {

@@ -193,6 +193,12 @@ document.addEventListener('DOMContentLoaded', () => {
       typingCursor.style.display = 'inline-block';
 
       await streamText(bubbleContent, reply);
+
+      if (reply.toLowerCase().includes('udah dulu ya chatnya')) {
+        chatInput.disabled = true;
+        chatInput.placeholder = 'chat telah diakhiri.';
+        sendBtn.disabled = true;
+      }
     } catch (err) {
       const typingIndicator = botRow.querySelector('.typing-indicator');
       if (typingIndicator) typingIndicator.remove();
@@ -207,7 +213,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (typingIndicator) typingIndicator.remove();
       typingCursor.remove();
       isGenerating = false;
-      sendBtn.disabled = false;
+      if (!chatInput.disabled) {
+        sendBtn.disabled = false;
+      }
       if (autoScrollActive) {
         scrollToBottom(true);
       }
