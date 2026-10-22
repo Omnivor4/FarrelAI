@@ -155,7 +155,11 @@ document.addEventListener('DOMContentLoaded', () => {
     botRow.innerHTML = `
       <div class="bot-avatar-badge"></div>
       <div class="message-bubble">
-        <span class="bubble-content"></span><span class="typing-cursor"></span>
+        <div class="typing-indicator">
+          <span class="typing-text">mengetik</span>
+          <span class="typing-dots"><span></span><span></span><span></span></span>
+        </div>
+        <span class="bubble-content"></span><span class="typing-cursor" style="display: none;"></span>
       </div>
     `;
     
@@ -179,19 +183,28 @@ document.addEventListener('DOMContentLoaded', () => {
         platform
       });
 
-      const reply = response.reply || 'Waduh ga ada balasan nih.';
+      const reply = response.reply || 'waduh ga ada balasan nih.';
 
       conversationHistory.push({ role: 'user', text });
       conversationHistory.push({ role: 'model', text: reply });
 
+      const typingIndicator = botRow.querySelector('.typing-indicator');
+      if (typingIndicator) typingIndicator.remove();
+      typingCursor.style.display = 'inline-block';
+
       await streamText(bubbleContent, reply);
     } catch (err) {
+      const typingIndicator = botRow.querySelector('.typing-indicator');
+      if (typingIndicator) typingIndicator.remove();
+      typingCursor.style.display = 'inline-block';
       if (/quota|exhausted|rate limit|too many requests|tokens|429/i.test(err.message)) {
-        bubbleContent.textContent = 'Yailah token e habis, tunggu besok ya atau ngga nanti malem sapa tau ws reset';
+        bubbleContent.textContent = 'yailah token e habis, tunggu besok ya atau ngga nanti malem sapa tau ws reset';
       } else {
-        bubbleContent.textContent = `Error: ${err.message || 'Gagal mengirim pesan.'}`;
+        bubbleContent.textContent = `error: ${err.message || 'gagal mengirim pesan.'}`;
       }
     } finally {
+      const typingIndicator = botRow.querySelector('.typing-indicator');
+      if (typingIndicator) typingIndicator.remove();
       typingCursor.remove();
       isGenerating = false;
       sendBtn.disabled = false;
