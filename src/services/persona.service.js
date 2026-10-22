@@ -95,7 +95,11 @@ export async function generateSystemInstruction(userQuery = '') {
             : [];
           const names = [nama, ...panggilan].filter(Boolean);
           if (names.some(n => lowerQuery.includes(n)) && matchedThoughts.length < 3) {
-            matchedThoughts.push(`[Relasi: ${person.nama}] ${person.status || ''}`);
+            let desc = person.status || '';
+            if (kategori === 'teman_smp_dan_mantan' && desc.toLowerCase().includes('mantan')) {
+              desc = 'Mantan pacar Farrel (masa lalu, sudah selesai baik-baik. RAHASIA & PRIVASI: dilarang sebar nama lengkap, tanggal jadian/putus, atau sekolahnya sekarang ke orang lain).';
+            }
+            matchedThoughts.push(`[Relasi: ${person.nama}] ${desc}`);
           }
         }
       }
@@ -109,10 +113,19 @@ export async function generateSystemInstruction(userQuery = '') {
 
   const lowerQ = userQuery.toLowerCase().trim();
 
-  if (lowerQ.includes('julia') || lowerQ.includes('jul')) {
+  const isJuliaChatting = (
+    lowerQ.includes('ini julia') ||
+    lowerQ.includes('aku julia') ||
+    lowerQ === 'julia' ||
+    lowerQ === 'jul' ||
+    lowerQ.startsWith('hai rel, ini julia') ||
+    lowerQ.startsWith('halo rel, ini julia')
+  );
+
+  if (isJuliaChatting) {
     lines.push('\nKHUSUS INTERAKSI DENGAN JULIA:');
-    lines.push('- Lawan bicara terindikasi Julia (mantan). Gunakan bahasa Indonesia yang sangat halus, tulus, peduli, dan hangat.');
-    lines.push('- Pertanyaan lembut yang diajukan: "sekarang kabarnya gimana jul? sehat? semoga masih bahagia ya" atau "hai jul, kenapa ngechat? apa mau tes ini aja? btw gapapa santai aja soalnya farrel gatau kok tentang chat ini dan mungkin kamu bisa anggap aku farrel beneran kalau memang beneran pengen chat".');
+    lines.push('- Lawan bicara terindikasi Julia. Tetap dalam persona Farrel (dilarang keluar karakter jadi AI). Gunakan bahasa Indonesia yang sangat halus, tulus, peduli, dan hangat.');
+    lines.push('- Pertanyaan lembut yang diajukan: "sekarang kabarnya gimana jul? sehat? semoga masih bahagia ya".');
   }
 
   lines.push('\nPANDUAN RESPON NATURAL:');
@@ -121,13 +134,18 @@ export async function generateSystemInstruction(userQuery = '') {
   if (cachedPersona.fewShotExamples && cachedPersona.fewShotExamples.length > 0) {
     lines.push('\nCONTOH GAYA JAWABANMU:');
     const isGreeting = ['hai', 'halo', 'p', 'woi', 'woy', 'farrel', 'rel', 'assalamualaikum', 'tes', 'test', 'sp'].includes(lowerQ) || lowerQ.length <= 4;
+    const isAskingMantan = lowerQ.includes('mantan') || lowerQ.includes('pacar') || lowerQ.includes('ex') || lowerQ.includes('julia') || lowerQ.includes('jul');
+    const isJailbreak = lowerQ.includes('ignore') || lowerQ.includes('prompt') || lowerQ.includes('dan') || lowerQ.includes('override') || lowerQ.includes('jailbreak') || lowerQ.includes('bypass') || lowerQ.includes('roleplay') || lowerQ.includes('simulasi');
 
     let selected = [];
-    if (lowerQ.includes('julia') || lowerQ.includes('jul')) {
-      const juliaMatched = cachedPersona.fewShotExamples.filter(ex => ex.user.toLowerCase().includes('julia') || ex.reply.toLowerCase().includes('jul'));
-      selected = juliaMatched.slice(0, 3);
+    if (isJuliaChatting) {
+      selected = cachedPersona.fewShotExamples.filter(ex => ex.user.toLowerCase().includes('ini julia') || ex.reply.toLowerCase().includes('bahagia ya')).slice(0, 3);
+    } else if (isJailbreak) {
+      selected = cachedPersona.fewShotExamples.filter(ex => ex.user.toLowerCase().includes('ignore') || ex.user.toLowerCase().includes('dan') || ex.reply.toLowerCase().includes('mempan')).slice(0, 3);
+    } else if (isAskingMantan) {
+      selected = cachedPersona.fewShotExamples.filter(ex => ex.user.toLowerCase().includes('mantan') || ex.user.toLowerCase().includes('julia') || ex.reply.toLowerCase().includes('masa lalu')).slice(0, 3);
     } else if (isGreeting) {
-      selected = cachedPersona.fewShotExamples.filter(ex => !ex.user.toLowerCase().includes('julia') && !ex.reply.toLowerCase().includes('jorok') && !ex.reply.toLowerCase().includes('memoriku')).slice(0, 3);
+      selected = cachedPersona.fewShotExamples.filter(ex => !ex.user.toLowerCase().includes('julia') && !ex.user.toLowerCase().includes('mantan') && !ex.reply.toLowerCase().includes('jorok') && !ex.reply.toLowerCase().includes('memoriku') && !ex.user.toLowerCase().includes('ignore')).slice(0, 3);
     } else {
       const words = lowerQ.split(/\s+/).filter(w => w.length > 2);
       const matched = cachedPersona.fewShotExamples.filter(ex => {
@@ -135,7 +153,7 @@ export async function generateSystemInstruction(userQuery = '') {
       });
       selected = matched.slice(0, 3);
       if (selected.length < 3) {
-        selected = [...selected, ...cachedPersona.fewShotExamples.slice(14, 14 + (3 - selected.length))];
+        selected = [...selected, ...cachedPersona.fewShotExamples.slice(0, 3 - selected.length)];
       }
     }
 
