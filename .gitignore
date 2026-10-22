@@ -12,3 +12,6 @@ data/logs/
 docs/
 data chat/
 *.zip
+.vercel
+*.pem
+*.key

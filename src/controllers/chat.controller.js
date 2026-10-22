@@ -13,10 +13,18 @@ export async function handleChatMessage(req, res, next) {
     }
 
     const cleanMessage = message.trim();
+    if (cleanMessage.length > 500) {
+      return res.status(400).json({
+        success: false,
+        error: 'Pesan terlalu panjang (maksimal 500 karakter).'
+      });
+    }
+
     const cleanDeviceId = deviceId?.trim() || 'anon-device';
     const cleanPlatform = platform?.trim() || 'Unknown Browser';
+    const safeHistory = Array.isArray(history) ? history.slice(-10) : [];
 
-    const botReply = await generateReply(cleanMessage, history);
+    const botReply = await generateReply(cleanMessage, safeHistory);
 
     logInteraction({
       deviceId: cleanDeviceId,
@@ -33,7 +41,7 @@ export async function handleChatMessage(req, res, next) {
     });
   } catch (err) {
     if (/quota|exhausted|rate limit|too many requests|tokens|429/i.test(err.message)) {
-      const fallbackMsg = 'Yailah token e habis, tunggu besok ya atau ngga nanti malem sapa tau ws reset';
+      const fallbackMsg = 'yailah token e habis, tunggu besok ya atau ngga nanti malem sapa tau ws reset';
       return res.json({
         success: true,
         reply: fallbackMsg
