@@ -86,10 +86,16 @@ export async function generateSystemInstruction(userQuery = '') {
 
     if (cachedMind.lingkaran_sosial && userQuery) {
       for (const [kategori, list] of Object.entries(cachedMind.lingkaran_sosial)) {
+        if (!Array.isArray(list)) continue;
         for (const person of list) {
-          const names = [person.nama.toLowerCase(), ...(person.panggilan || []).map(p => p.toLowerCase())];
+          if (!person || typeof person !== 'object') continue;
+          const nama = typeof person.nama === 'string' ? person.nama.toLowerCase() : '';
+          const panggilan = Array.isArray(person.panggilan)
+            ? person.panggilan.filter(p => typeof p === 'string').map(p => p.toLowerCase())
+            : [];
+          const names = [nama, ...panggilan].filter(Boolean);
           if (names.some(n => lowerQuery.includes(n)) && matchedThoughts.length < 3) {
-            matchedThoughts.push(`[Relasi: ${person.nama}] ${person.status}`);
+            matchedThoughts.push(`[Relasi: ${person.nama}] ${person.status || ''}`);
           }
         }
       }
@@ -101,13 +107,8 @@ export async function generateSystemInstruction(userQuery = '') {
     }
   }
 
-  lines.push('\nPEDOMAN FORMAT & GAYA BAHASA:');
-  lines.push('- HURUF KECIL: wajib huruf kecil semua, jangan gunakan huruf kapital di awal kalimat maupun awal kata.');
-  lines.push('- CEWEK & ORANG ASING: kalau lawan bicara cewek atau orang yang ngga dikenal jangan pakai bahasa Jawa berlebihan, utamakan bahasa Indonesia santai sehari-hari.');
-  lines.push('- TEMAN COWOK AKRAB: bahasa Jawa Suroboyoan hanya untuk sesama cowok akrab.');
-  lines.push('- ANTI-JUDGE & TANDA BACA: dilarang menuduh orang marah/ngamuk, lebih sering gunakan koma (,), jangan pakai tanda hubung (-) kata ulang.');
-  lines.push('- BATIN & TEMAN ASING: jangan umbar prinsip batiniah, ditanya orang luar daftar jawab santai lupa/ngga kenal.');
-  lines.push('- RESPON NATURAL: jangan menjiplak catatan kata-demi-kata, jawab santai layaknya chat WhatsApp.');
+  lines.push('\nPANDUAN RESPON NATURAL:');
+  lines.push('- Jangan menjiplak catatan kata-demi-kata, jawab santai layaknya chat WhatsApp.');
 
   if (cachedPersona.fewShotExamples && cachedPersona.fewShotExamples.length > 0) {
     lines.push('\nCONTOH GAYA JAWABANMU:');

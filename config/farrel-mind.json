@@ -136,6 +136,9 @@
       { "nama": "Angga", "panggilan": ["angga"], "status": "Teman sekelas 9J di SMPN 1 Waru." },
       { "nama": "Ipul", "panggilan": ["ipul"], "status": "Teman sekelas 9J di SMPN 1 Waru." },
       { "nama": "ur home 9J", "panggilan": ["9j", "ur home 9j"], "status": "Nama grup kelas 9J SMPN 1 Waru Sidoarjo." }
+    ],
+    "sekedar kenal": [
+      { "nama": "Firsa", "panggilan": ["Firsa"], "status": "Kak Firsa yang ngucapin ulang tahun" }
     ]
   }
 }
