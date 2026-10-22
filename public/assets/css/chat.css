@@ -383,13 +383,31 @@
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.send-button .stop-icon {
+  display: none;
+  fill: var(--btn-arrow);
+  stroke: none;
+}
+
+.send-button.is-generating .send-icon {
+  display: none;
+}
+
+.send-button.is-generating .stop-icon {
+  display: block;
+}
+
 .send-button:hover:not(:disabled) {
   transform: translateY(-2px) scale(1.04);
   box-shadow: 0 6px 16px rgba(158, 177, 199, 0.4);
 }
 
-.send-button:hover:not(:disabled) svg {
+.send-button:hover:not(:disabled) .send-icon {
   transform: translateY(-1px);
+}
+
+.send-button.is-generating:hover:not(:disabled) .stop-icon {
+  transform: scale(0.95);
 }
 
 .send-button:active:not(:disabled) {

@@ -1,4 +1,4 @@
-export async function sendChatMessage({ message, history = [], deviceId, platform }) {
+export async function sendChatMessage({ message, history = [], deviceId, platform, signal }) {
   const response = await fetch('/api/chat', {
     method: 'POST',
     headers: {
@@ -9,7 +9,8 @@ export async function sendChatMessage({ message, history = [], deviceId, platfor
       history,
       deviceId,
       platform
-    })
+    }),
+    signal
   });
 
   const data = await response.json().catch(() => ({}));

@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const conversationHistory = [];
   let isGenerating = false;
   let autoScrollActive = true;
+  let currentAbortController = null;
 
   function getScrollPosition() {
     return Math.max(
@@ -125,11 +126,40 @@ document.addEventListener('DOMContentLoaded', () => {
   chatInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
+      if (isGenerating) return;
       handleSubmit();
     }
   });
 
-  sendBtn.addEventListener('click', handleSubmit);
+  sendBtn.addEventListener('click', () => {
+    if (isGenerating) {
+      handleStop();
+    } else {
+      handleSubmit();
+    }
+  });
+
+  function handleStop() {
+    if (currentAbortController) {
+      currentAbortController.abort();
+    }
+  }
+
+  function updateSendButtonState(generating) {
+    if (generating) {
+      sendBtn.classList.add('is-generating');
+      sendBtn.setAttribute('aria-label', 'Hentikan respons');
+      sendBtn.disabled = false;
+    } else {
+      sendBtn.classList.remove('is-generating');
+      sendBtn.setAttribute('aria-label', 'Kirim Pesan');
+      if (chatInput.disabled) {
+        sendBtn.disabled = true;
+      } else {
+        sendBtn.disabled = false;
+      }
+    }
+  }
 
   async function handleSubmit() {
     const text = chatInput.value.trim();
@@ -148,7 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
     chatInput.style.height = 'auto';
 
     isGenerating = true;
-    sendBtn.disabled = true;
+    currentAbortController = new AbortController();
+    updateSendButtonState(true);
 
     const botRow = document.createElement('div');
     botRow.className = 'message-row bot';
@@ -180,7 +211,8 @@ document.addEventListener('DOMContentLoaded', () => {
         message: text,
         history: conversationHistory,
         deviceId,
-        platform
+        platform,
+        signal: currentAbortController.signal
       });
 
       const reply = response.reply || 'waduh ga ada balasan nih.';
@@ -192,7 +224,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (typingIndicator) typingIndicator.remove();
       typingCursor.style.display = 'inline-block';
 
-      await streamText(bubbleContent, reply);
+      await streamText(bubbleContent, reply, 12, currentAbortController.signal);
+
+      if (currentAbortController.signal.aborted) {
+        if (conversationHistory.length > 0 && conversationHistory[conversationHistory.length - 1].role === 'model') {
+          conversationHistory[conversationHistory.length - 1].text = bubbleContent.textContent || 'obrolan dihentikan.';
+        }
+      }
 
       if (reply.toLowerCase().includes('udah dulu ya chatnya')) {
         chatInput.disabled = true;
@@ -203,7 +241,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const typingIndicator = botRow.querySelector('.typing-indicator');
       if (typingIndicator) typingIndicator.remove();
       typingCursor.style.display = 'inline-block';
-      if (/quota|exhausted|rate limit|too many requests|tokens|429/i.test(err.message)) {
+      if (err.name === 'AbortError' || currentAbortController?.signal?.aborted) {
+        if (!bubbleContent.textContent) {
+          bubbleContent.textContent = 'obrolan dihentikan.';
+        }
+      } else if (/quota|exhausted|rate limit|too many requests|tokens|429/i.test(err.message)) {
         bubbleContent.textContent = 'yailah token e habis, tunggu besok ya atau ngga nanti malem sapa tau ws reset';
       } else {
         bubbleContent.textContent = `error: ${err.message || 'gagal mengirim pesan.'}`;
@@ -213,9 +255,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (typingIndicator) typingIndicator.remove();
       typingCursor.remove();
       isGenerating = false;
-      if (!chatInput.disabled) {
-        sendBtn.disabled = false;
-      }
+      currentAbortController = null;
+      updateSendButtonState(false);
       if (autoScrollActive) {
         scrollToBottom(true);
       }
@@ -244,11 +285,16 @@ document.addEventListener('DOMContentLoaded', () => {
     scrollToBottom(true);
   }
 
-  function streamText(element, fullText, speedMs = 12) {
+  function streamText(element, fullText, speedMs = 12, signal) {
     return new Promise((resolve) => {
       let index = 0;
       let lastScroll = 0;
       const interval = setInterval(() => {
+        if (signal && signal.aborted) {
+          clearInterval(interval);
+          resolve();
+          return;
+        }
         if (index < fullText.length) {
           element.textContent += fullText.charAt(index);
           index++;
