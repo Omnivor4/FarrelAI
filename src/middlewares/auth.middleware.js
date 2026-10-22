@@ -1,5 +1,7 @@
+import crypto from 'node:crypto';
+
 export function adminAuth(req, res, next) {
-  const configuredPassword = process.env.ADMIN_PASSWORD || 'farrel123';
+  const configuredPassword = process.env.ADMIN_PASSWORD || 'pensoke';
   
   const authHeader = req.headers['authorization'];
   let token = null;
@@ -12,7 +14,17 @@ export function adminAuth(req, res, next) {
     token = req.query.adminKey.trim();
   }
 
-  if (!token || token !== configuredPassword) {
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      error: 'Akses ditolak: Password admin salah atau belum dimasukkan.'
+    });
+  }
+
+  const tokenBuf = Buffer.from(token);
+  const passBuf = Buffer.from(configuredPassword);
+
+  if (tokenBuf.length !== passBuf.length || !crypto.timingSafeEqual(tokenBuf, passBuf)) {
     return res.status(401).json({
       success: false,
       error: 'Akses ditolak: Password admin salah atau belum dimasukkan.'
