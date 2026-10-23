@@ -113,7 +113,11 @@ export async function generateReply(userMessage, chatHistory = []) {
         const replyText = candidate?.content?.parts?.[0]?.text;
 
         if (replyText && replyText.trim().length > 0) {
-          return replyText.trim();
+          let cleaned = replyText.trim();
+          cleaned = cleaned.replace(/(\p{L}+)-(\p{L}+)/gu, (match, p1, p2) => p1 + ' ' + p2);
+          cleaned = cleaned.replace(/\s*[-–—]+\s*/g, ' ');
+          cleaned = cleaned.replace(/\s{2,}/g, ' ');
+          return cleaned.trim();
         }
       } catch (netErr) {
         console.error(`[Gemini Network Error - ${currentModel}]`, netErr.message);

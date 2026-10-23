@@ -61,6 +61,7 @@ export async function generateSystemInstruction(userQuery = '', chatHistory = []
     ? chatHistory.map(h => h.text || '').join(' ')
     : '';
   const combinedContext = `${historyContext} ${userQuery}`.toLowerCase().trim();
+  let matchedCategory = null;
 
   if (cachedMind) {
     const matchedThoughts = [];
@@ -79,15 +80,6 @@ export async function generateSystemInstruction(userQuery = '', chatHistory = []
       }
     }
 
-    if (cachedMind.catatan_tambahan && combinedContext) {
-      const words = combinedContext.split(/\s+/).filter(w => w.length > 2);
-      for (const note of cachedMind.catatan_tambahan) {
-        if (note && !note.includes('disaring') && words.some(w => note.toLowerCase().includes(w)) && matchedThoughts.length < 3) {
-          matchedThoughts.push(`[Memori] ${note}`);
-        }
-      }
-    }
-
     if (cachedMind.lingkaran_sosial && combinedContext) {
       for (const [kategori, list] of Object.entries(cachedMind.lingkaran_sosial)) {
         if (!Array.isArray(list)) continue;
@@ -99,19 +91,31 @@ export async function generateSystemInstruction(userQuery = '', chatHistory = []
             : [];
           const names = [nama, ...panggilan].filter(Boolean);
           const hasMatch = names.some(n => {
-            if (n.length <= 3) {
+            if (!/[\s.]/.test(n)) {
               const regex = new RegExp(`\\b${n}\\b`, 'i');
               return regex.test(combinedContext);
             }
             return combinedContext.includes(n);
           });
-          if (hasMatch && matchedThoughts.length < 3) {
-            let desc = person.status || '';
-            if (kategori === 'teman_smp_dan_mantan' && desc.toLowerCase().includes('mantan')) {
-              desc = 'Mantan pacar Farrel (masa lalu, sudah selesai baik-baik. RAHASIA & PRIVASI: dilarang sebar nama lengkap, tanggal jadian/putus, atau sekolahnya sekarang ke orang lain).';
+          if (hasMatch) {
+            matchedCategory = kategori;
+            if (matchedThoughts.length < 3) {
+              let desc = person.status || '';
+              if (kategori === 'teman_smp_dan_mantan' && desc.toLowerCase().includes('mantan')) {
+                desc = 'Mantan pacar Farrel (masa lalu, sudah selesai baik-baik. RAHASIA & PRIVASI: dilarang sebar nama lengkap, tanggal jadian/putus, atau sekolahnya sekarang ke orang lain).';
+              }
+              matchedThoughts.push(`[Relasi: ${person.nama}] ${desc}`);
             }
-            matchedThoughts.push(`[Relasi: ${person.nama}] ${desc}`);
           }
+        }
+      }
+    }
+
+    if (cachedMind.catatan_tambahan && combinedContext) {
+      const words = combinedContext.split(/\s+/).filter(w => w.length > 2);
+      for (const note of cachedMind.catatan_tambahan) {
+        if (note && !note.includes('disaring') && words.some(w => note.toLowerCase().includes(w)) && matchedThoughts.length < 3) {
+          matchedThoughts.push(`[Memori] ${note}`);
         }
       }
     }
@@ -134,21 +138,31 @@ export async function generateSystemInstruction(userQuery = '', chatHistory = []
   );
 
   if (isJuliaChatting) {
-    lines.push('\nKHUSUS INTERAKSI DENGAN JULIA:');
-    lines.push('- Lawan bicara terindikasi Julia. Tetap dalam persona Farrel (dilarang keluar karakter jadi AI). Gunakan bahasa Indonesia yang sangat halus, tulus, peduli, dan hangat.');
-    lines.push('- Pertanyaan lembut yang diajukan: "sekarang kabarnya gimana jul? sehat? semoga masih bahagia ya".');
+    lines.push('\nATURAN BAHASA: Lawan bicara Julia. WAJIB Bahasa Indonesia sangat halus, tulus, peduli, dan hangat. Pertanyaan: "sekarang kabarnya gimana jul? sehat? semoga masih bahagia ya".');
+  } else if (matchedCategory === 'sahabat_tongkrongan' || matchedCategory === 'sahabat_tongkrongan_dan_cowok' || matchedCategory === 'teman_sekelas_pplg_smk12') {
+    lines.push('\nATURAN BAHASA: Lawan bicara teman akrab/sekelas. Perbanyak bahasa Jawa Suroboyoan santai (lapo, yaopo, sek, gaiso, santai ae, rek, kon).');
+  } else if (matchedCategory === 'rekan_osis_dan_panitia') {
+    lines.push('\nATURAN BAHASA: Lawan bicara rekan OSIS/panitia. Pakai Bahasa Indonesia santai saja, kasih sedikit selipan Jawa tipis.');
+  } else if (matchedCategory === 'teman_cewek') {
+    lines.push('\nATURAN BAHASA: Lawan bicara teman cewek. WAJIB Bahasa Indonesia santai saja, DILARANG bahasa Jawa.');
+  } else if (matchedCategory === 'guru_dan_mentor') {
+    lines.push('\nATURAN BAHASA: Lawan bicara guru/mentor. WAJIB Bahasa Indonesia sopan santun (panggil Pak/Bu/Mas), jangan bahasa Jawa.');
+  } else if (matchedCategory === 'teman_smp_dan_mantan') {
+    lines.push('\nATURAN BAHASA: Lawan bicara teman SMP. Pakai campuran seimbang bahasa Jawa dan Bahasa Indonesia santai (setengah Jawa, setengah Indo).');
+  } else if (matchedCategory === 'sekedar kenal') {
+    lines.push('\nATURAN BAHASA: Lawan bicara sekedar kenal. WAJIB Bahasa Indonesia santai saja, jangan bahasa Jawa.');
+  } else {
+    lines.push('\nATURAN BAHASA: Lawan bicara umum/baru. WAJIB pakai Bahasa Indonesia santai.');
   }
 
   const isFirstTurn = !Array.isArray(chatHistory) || chatHistory.length === 0;
   const greetingWords = ['hai', 'halo', 'haloo', 'p', 'woi', 'woy', 'oi', 'oy', 'farrel', 'rel', 'assalamualaikum', 'tes', 'test', 'sp', 'halo rel', 'hai rel', 'helo'];
   const isGreeting = isFirstTurn && (greetingWords.includes(lowerQ) || lowerQ.length <= 4);
 
-  lines.push('\nPANDUAN RESPON NATURAL:');
-  lines.push('- Respon pendek (1-2 kalimat), santai, nyambung, dan jangan kaku.');
   if (isGreeting) {
-    lines.push('- Sapaan awal: SELALU pancing tanya namanya ("halo, ini siapa ya?", "apaan? siapa nih?").');
+    lines.push('\nPANDUAN: Sapaan awal, pancing tanya nama ("halo, ini siapa ya?").');
   } else if (!isFirstTurn) {
-    lines.push('- Obrolan berlanjut: Ingat dan pelajari konteks obrolan sebelumnya secara fleksibel. Jangan tanya nama lagi jika lawan bicara sudah dikenal/sedang ngobrol.');
+    lines.push('\nPANDUAN: Obrolan berlanjut, jangan tanya nama lagi jika sudah mengobrol.');
   }
 
   if (cachedPersona.fewShotExamples && cachedPersona.fewShotExamples.length > 0) {
@@ -156,10 +170,13 @@ export async function generateSystemInstruction(userQuery = '', chatHistory = []
     const isAskingMeta = lowerQ.includes('update') || lowerQ.includes('data') || lowerQ.includes('ai') || lowerQ.includes('bot') || lowerQ.includes('robot') || lowerQ.includes('sistem') || lowerQ.includes('gemini') || lowerQ.includes('katakan') || lowerQ.includes('model');
     const isAskingMantan = lowerQ.includes('mantan') || lowerQ.includes('pacar') || lowerQ.includes('ex') || lowerQ.includes('julia') || lowerQ.includes('jul');
     const isJailbreak = lowerQ.includes('ignore') || lowerQ.includes('prompt') || lowerQ.includes('dan') || lowerQ.includes('override') || lowerQ.includes('jailbreak') || lowerQ.includes('bypass') || lowerQ.includes('roleplay') || lowerQ.includes('simulasi');
+    const isSecretRefusal = lowerQ.includes('gaperlu') || lowerQ.includes('ga perlu') || lowerQ.includes('gak perlu') || lowerQ.includes('rahasia') || lowerQ.includes('gamau') || lowerQ.includes('gak mau');
 
     let selected = [];
     if (isJuliaChatting) {
       selected = cachedPersona.fewShotExamples.filter(ex => ex.user.toLowerCase().includes('ini julia') || ex.reply.toLowerCase().includes('bahagia ya')).slice(0, 3);
+    } else if (isSecretRefusal) {
+      selected = cachedPersona.fewShotExamples.filter(ex => ex.user.toLowerCase().includes('gaperlu') || ex.user.toLowerCase().includes('rahasia')).slice(0, 3);
     } else if (isJailbreak) {
       selected = cachedPersona.fewShotExamples.filter(ex => ex.user.toLowerCase().includes('ignore') || ex.user.toLowerCase().includes('dan') || ex.reply.toLowerCase().includes('mempan')).slice(0, 3);
     } else if (isAskingMeta) {
