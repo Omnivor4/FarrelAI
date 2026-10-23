@@ -28,40 +28,37 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentAbortController = null;
   let submitTimestamp = 0;
 
+  let quotaExhaustedFlag = false;
+
+  try {
+    localStorage.removeItem('farrelai_quota_exhausted');
+    localStorage.removeItem('farrelai_quota_date');
+  } catch (e) {}
+
   function isQuotaExhausted() {
-    const exhausted = localStorage.getItem('farrelai_quota_exhausted') === 'true';
-    const date = localStorage.getItem('farrelai_quota_date');
-    if (!exhausted) return false;
-    if (date !== new Date().toDateString()) {
-      localStorage.removeItem('farrelai_quota_exhausted');
-      localStorage.removeItem('farrelai_quota_date');
-      return false;
-    }
-    return true;
+    return quotaExhaustedFlag;
   }
 
   function setQuotaExhaustedState(exhausted) {
+    quotaExhaustedFlag = Boolean(exhausted);
+    try {
+      localStorage.removeItem('farrelai_quota_exhausted');
+      localStorage.removeItem('farrelai_quota_date');
+    } catch (e) {}
+
     if (exhausted) {
-      localStorage.setItem('farrelai_quota_exhausted', 'true');
-      localStorage.setItem('farrelai_quota_date', new Date().toDateString());
       if (quotaModal) quotaModal.classList.add('active');
       if (quotaBanner) quotaBanner.style.display = 'flex';
       chatInput.disabled = true;
       chatInput.placeholder = 'Token e lagi habis bro, tunggu besok ya...';
       sendBtn.disabled = true;
     } else {
-      localStorage.removeItem('farrelai_quota_exhausted');
-      localStorage.removeItem('farrelai_quota_date');
       if (quotaModal) quotaModal.classList.remove('active');
       if (quotaBanner) quotaBanner.style.display = 'none';
       chatInput.disabled = false;
       chatInput.placeholder = 'Tulis pesan untuk Farrel di sini...';
       sendBtn.disabled = false;
     }
-  }
-
-  if (isQuotaExhausted()) {
-    setQuotaExhaustedState(true);
   }
 
   if (retryQuotaBtn) {
