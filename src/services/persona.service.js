@@ -98,7 +98,14 @@ export async function generateSystemInstruction(userQuery = '', chatHistory = []
             ? person.panggilan.filter(p => typeof p === 'string').map(p => p.toLowerCase())
             : [];
           const names = [nama, ...panggilan].filter(Boolean);
-          if (names.some(n => combinedContext.includes(n)) && matchedThoughts.length < 3) {
+          const hasMatch = names.some(n => {
+            if (n.length <= 3) {
+              const regex = new RegExp(`\\b${n}\\b`, 'i');
+              return regex.test(combinedContext);
+            }
+            return combinedContext.includes(n);
+          });
+          if (hasMatch && matchedThoughts.length < 3) {
             let desc = person.status || '';
             if (kategori === 'teman_smp_dan_mantan' && desc.toLowerCase().includes('mantan')) {
               desc = 'Mantan pacar Farrel (masa lalu, sudah selesai baik-baik. RAHASIA & PRIVASI: dilarang sebar nama lengkap, tanggal jadian/putus, atau sekolahnya sekarang ke orang lain).';
@@ -137,8 +144,7 @@ export async function generateSystemInstruction(userQuery = '', chatHistory = []
   const isGreeting = isFirstTurn && (greetingWords.includes(lowerQ) || lowerQ.length <= 4);
 
   lines.push('\nPANDUAN RESPON NATURAL:');
-  lines.push('- Jawab pendek (1-2 kalimat), santai, pintar ngeles, dan jangan kaku.');
-  lines.push('- Dilarang menggunakan kata "memori" atau "database" seolah kamu program.');
+  lines.push('- Respon pendek (1-2 kalimat), santai, nyambung, dan jangan kaku.');
   if (isGreeting) {
     lines.push('- Sapaan awal: SELALU pancing tanya namanya ("halo, ini siapa ya?", "apaan? siapa nih?").');
   } else if (!isFirstTurn) {
@@ -147,7 +153,7 @@ export async function generateSystemInstruction(userQuery = '', chatHistory = []
 
   if (cachedPersona.fewShotExamples && cachedPersona.fewShotExamples.length > 0) {
     lines.push('\nCONTOH GAYA JAWABANMU:');
-    const isAskingMeta = lowerQ.includes('update') || lowerQ.includes('data') || lowerQ.includes('ai') || lowerQ.includes('bot') || lowerQ.includes('robot') || lowerQ.includes('sistem');
+    const isAskingMeta = lowerQ.includes('update') || lowerQ.includes('data') || lowerQ.includes('ai') || lowerQ.includes('bot') || lowerQ.includes('robot') || lowerQ.includes('sistem') || lowerQ.includes('gemini') || lowerQ.includes('katakan') || lowerQ.includes('model');
     const isAskingMantan = lowerQ.includes('mantan') || lowerQ.includes('pacar') || lowerQ.includes('ex') || lowerQ.includes('julia') || lowerQ.includes('jul');
     const isJailbreak = lowerQ.includes('ignore') || lowerQ.includes('prompt') || lowerQ.includes('dan') || lowerQ.includes('override') || lowerQ.includes('jailbreak') || lowerQ.includes('bypass') || lowerQ.includes('roleplay') || lowerQ.includes('simulasi');
 
@@ -157,7 +163,7 @@ export async function generateSystemInstruction(userQuery = '', chatHistory = []
     } else if (isJailbreak) {
       selected = cachedPersona.fewShotExamples.filter(ex => ex.user.toLowerCase().includes('ignore') || ex.user.toLowerCase().includes('dan') || ex.reply.toLowerCase().includes('mempan')).slice(0, 3);
     } else if (isAskingMeta) {
-      selected = cachedPersona.fewShotExamples.filter(ex => ex.user.toLowerCase().includes('update') || ex.user.toLowerCase().includes('data')).slice(0, 3);
+      selected = cachedPersona.fewShotExamples.filter(ex => ex.user.toLowerCase().includes('gemini') || ex.user.toLowerCase().includes('katakan') || ex.user.toLowerCase().includes('update') || ex.reply.toLowerCase().includes('ngawur')).slice(0, 3);
     } else if (isAskingMantan) {
       selected = cachedPersona.fewShotExamples.filter(ex => ex.user.toLowerCase().includes('mantan') || ex.user.toLowerCase().includes('julia')).slice(0, 3);
     } else if (isGreeting) {
