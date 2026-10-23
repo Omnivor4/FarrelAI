@@ -44,7 +44,7 @@ async function loadConfig() {
   }
 }
 
-export async function generateSystemInstruction(userQuery = '') {
+export async function generateSystemInstruction(userQuery = '', chatHistory = []) {
   await loadConfig();
 
   const lines = [];
@@ -57,26 +57,30 @@ export async function generateSystemInstruction(userQuery = '') {
     lines.push(`- ${rule}`);
   }
 
+  const historyContext = Array.isArray(chatHistory)
+    ? chatHistory.map(h => h.text || '').join(' ')
+    : '';
+  const combinedContext = `${historyContext} ${userQuery}`.toLowerCase().trim();
+
   if (cachedMind) {
     const matchedThoughts = [];
-    const lowerQuery = userQuery.toLowerCase();
 
     if (cachedMind.pandangan_topik) {
       for (const [topic, opinion] of Object.entries(cachedMind.pandangan_topik)) {
-        if (lowerQuery.includes(topic.toLowerCase())) {
+        if (combinedContext.includes(topic.toLowerCase())) {
           matchedThoughts.push(`[Topik: ${topic}] ${opinion}`);
         }
       }
     }
 
-    if (cachedMind.hobi_dan_kesukaan && (lowerQuery.includes('hobi') || lowerQuery.includes('suka') || lowerQuery.includes('makan') || lowerQuery.includes('masak') || lowerQuery.includes('favorit'))) {
+    if (cachedMind.hobi_dan_kesukaan && (combinedContext.includes('hobi') || combinedContext.includes('suka') || combinedContext.includes('makan') || combinedContext.includes('masak') || combinedContext.includes('favorit'))) {
       for (const hobi of cachedMind.hobi_dan_kesukaan) {
         matchedThoughts.push(`[Hobi/Kesukaan] ${hobi}`);
       }
     }
 
-    if (cachedMind.catatan_tambahan && userQuery) {
-      const words = lowerQuery.split(/\s+/).filter(w => w.length > 2);
+    if (cachedMind.catatan_tambahan && combinedContext) {
+      const words = combinedContext.split(/\s+/).filter(w => w.length > 2);
       for (const note of cachedMind.catatan_tambahan) {
         if (note && !note.includes('disaring') && words.some(w => note.toLowerCase().includes(w)) && matchedThoughts.length < 3) {
           matchedThoughts.push(`[Memori] ${note}`);
@@ -84,7 +88,7 @@ export async function generateSystemInstruction(userQuery = '') {
       }
     }
 
-    if (cachedMind.lingkaran_sosial && userQuery) {
+    if (cachedMind.lingkaran_sosial && combinedContext) {
       for (const [kategori, list] of Object.entries(cachedMind.lingkaran_sosial)) {
         if (!Array.isArray(list)) continue;
         for (const person of list) {
@@ -94,7 +98,7 @@ export async function generateSystemInstruction(userQuery = '') {
             ? person.panggilan.filter(p => typeof p === 'string').map(p => p.toLowerCase())
             : [];
           const names = [nama, ...panggilan].filter(Boolean);
-          if (names.some(n => lowerQuery.includes(n)) && matchedThoughts.length < 3) {
+          if (names.some(n => combinedContext.includes(n)) && matchedThoughts.length < 3) {
             let desc = person.status || '';
             if (kategori === 'teman_smp_dan_mantan' && desc.toLowerCase().includes('mantan')) {
               desc = 'Mantan pacar Farrel (masa lalu, sudah selesai baik-baik. RAHASIA & PRIVASI: dilarang sebar nama lengkap, tanggal jadian/putus, atau sekolahnya sekarang ke orang lain).';
@@ -114,8 +118,8 @@ export async function generateSystemInstruction(userQuery = '') {
   const lowerQ = userQuery.toLowerCase().trim();
 
   const isJuliaChatting = (
-    lowerQ.includes('ini julia') ||
-    lowerQ.includes('aku julia') ||
+    combinedContext.includes('ini julia') ||
+    combinedContext.includes('aku julia') ||
     lowerQ === 'julia' ||
     lowerQ === 'jul' ||
     lowerQ.startsWith('hai rel, ini julia') ||
@@ -128,14 +132,17 @@ export async function generateSystemInstruction(userQuery = '') {
     lines.push('- Pertanyaan lembut yang diajukan: "sekarang kabarnya gimana jul? sehat? semoga masih bahagia ya".');
   }
 
+  const isFirstTurn = !Array.isArray(chatHistory) || chatHistory.length === 0;
   const greetingWords = ['hai', 'halo', 'haloo', 'p', 'woi', 'woy', 'oi', 'oy', 'farrel', 'rel', 'assalamualaikum', 'tes', 'test', 'sp', 'halo rel', 'hai rel', 'helo'];
-  const isGreeting = greetingWords.includes(lowerQ) || lowerQ.length <= 4;
+  const isGreeting = isFirstTurn && (greetingWords.includes(lowerQ) || lowerQ.length <= 4);
 
   lines.push('\nPANDUAN RESPON NATURAL:');
   lines.push('- Jawab pendek (1-2 kalimat), santai, pintar ngeles, dan jangan kaku.');
   lines.push('- Dilarang menggunakan kata "memori" atau "database" seolah kamu program.');
   if (isGreeting) {
     lines.push('- Sapaan awal: SELALU pancing tanya namanya ("halo, ini siapa ya?", "apaan? siapa nih?").');
+  } else if (!isFirstTurn) {
+    lines.push('- Obrolan berlanjut: Ingat dan pelajari konteks obrolan sebelumnya secara fleksibel. Jangan tanya nama lagi jika lawan bicara sudah dikenal/sedang ngobrol.');
   }
 
   if (cachedPersona.fewShotExamples && cachedPersona.fewShotExamples.length > 0) {

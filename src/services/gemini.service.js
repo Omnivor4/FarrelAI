@@ -20,7 +20,7 @@ const DEPRECATED_OR_PAID = [
 export function buildGeminiPayload(userMessage, chatHistory = [], systemPrompt = '') {
   const contents = [];
 
-  const recentHistory = chatHistory.slice(-6);
+  const recentHistory = chatHistory.slice(-10);
   for (const item of recentHistory) {
     if (item.role && item.text) {
       contents.push({
@@ -65,7 +65,7 @@ export async function generateReply(userMessage, chatHistory = []) {
     return 'Waduh bro, API Key-mu belum dipasang di file .env nih! Masukin dulu GEMINI_API_KEY-nya biar gw bisa mikir beneran, wkwk.';
   }
 
-  const systemPrompt = await generateSystemInstruction(userMessage);
+  const systemPrompt = await generateSystemInstruction(userMessage, chatHistory);
   const payload = buildGeminiPayload(userMessage, chatHistory, systemPrompt);
 
   const candidateModels = [model, ...FREE_MODELS.filter(m => m !== model)];
