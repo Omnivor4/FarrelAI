@@ -1,13 +1,17 @@
 const ipChatStore = new Map();
+const deviceChatStore = new Map();
 const ipAdminStore = new Map();
 
 setInterval(() => {
   const now = Date.now();
-  for (const [ip, data] of ipChatStore.entries()) {
-    if (now > data.resetTime) ipChatStore.delete(ip);
+  for (const [key, data] of ipChatStore.entries()) {
+    if (now > data.resetTime) ipChatStore.delete(key);
   }
-  for (const [ip, data] of ipAdminStore.entries()) {
-    if (now > data.resetTime) ipAdminStore.delete(ip);
+  for (const [key, data] of deviceChatStore.entries()) {
+    if (now > data.resetTime) deviceChatStore.delete(key);
+  }
+  for (const [key, data] of ipAdminStore.entries()) {
+    if (now > data.resetTime) ipAdminStore.delete(key);
   }
 }, 5 * 60 * 1000).unref();
 
@@ -27,21 +31,39 @@ export function chatRateLimit(req, res, next) {
   const windowMs = 60 * 1000;
   const maxRequests = 30;
 
-  const client = ipChatStore.get(ip) || { count: 0, resetTime: now + windowMs };
+  const clientIp = ipChatStore.get(ip) || { count: 0, resetTime: now + windowMs };
 
-  if (now > client.resetTime) {
-    client.count = 0;
-    client.resetTime = now + windowMs;
+  if (now > clientIp.resetTime) {
+    clientIp.count = 0;
+    clientIp.resetTime = now + windowMs;
   }
 
-  client.count++;
-  ipChatStore.set(ip, client);
+  clientIp.count++;
+  ipChatStore.set(ip, clientIp);
 
-  if (client.count > maxRequests) {
+  if (clientIp.count > maxRequests) {
     return res.status(429).json({
       success: false,
       error: 'santai dulu bro, jangan spam chat, tunggu semenit ya.'
     });
+  }
+
+  const rawDeviceId = req.body?.deviceId;
+  if (typeof rawDeviceId === 'string' && rawDeviceId.length >= 8 && rawDeviceId.length <= 64) {
+    const clientDev = deviceChatStore.get(rawDeviceId) || { count: 0, resetTime: now + windowMs };
+    if (now > clientDev.resetTime) {
+      clientDev.count = 0;
+      clientDev.resetTime = now + windowMs;
+    }
+    clientDev.count++;
+    deviceChatStore.set(rawDeviceId, clientDev);
+
+    if (clientDev.count > maxRequests) {
+      return res.status(429).json({
+        success: false,
+        error: 'santai dulu bro, jangan spam chat, tunggu semenit ya.'
+      });
+    }
   }
 
   next();

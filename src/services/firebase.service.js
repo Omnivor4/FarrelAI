@@ -57,13 +57,18 @@ function initFirebase() {
 initFirebase();
 
 export async function logInteraction({ deviceId, platform, userMessage, botReply }) {
-  const localResult = await localLogInteraction({ deviceId, platform, userMessage, botReply });
+  const safeDeviceId = (typeof deviceId === 'string' && /^[a-zA-Z0-9_-]{8,64}$/.test(deviceId.trim()))
+    ? deviceId.trim()
+    : 'anon-device';
+  const safePlatform = typeof platform === 'string' ? platform.slice(0, 80) : 'Web Browser';
+
+  const localResult = await localLogInteraction({ deviceId: safeDeviceId, platform: safePlatform, userMessage, botReply });
 
   const isTest = (
     process.env.NODE_ENV === 'test' ||
-    deviceId?.startsWith('test-') ||
-    deviceId?.startsWith('api-test-') ||
-    platform === 'Test Runner'
+    safeDeviceId.startsWith('test-') ||
+    safeDeviceId.startsWith('api-test-') ||
+    safePlatform === 'Test Runner'
   );
 
   if (isTest) {
@@ -73,18 +78,18 @@ export async function logInteraction({ deviceId, platform, userMessage, botReply
   if (firestoreDb) {
     try {
       const now = admin.firestore.FieldValue.serverTimestamp();
-      const deviceRef = firestoreDb.collection('devices').doc(deviceId);
+      const deviceRef = firestoreDb.collection('devices').doc(safeDeviceId);
 
       await Promise.all([
         deviceRef.set({
-          deviceId,
-          platform: platform || 'Web Browser',
+          deviceId: safeDeviceId,
+          platform: safePlatform,
           lastActive: now,
           messageCount: admin.firestore.FieldValue.increment(1)
         }, { merge: true }),
         firestoreDb.collection('chat_logs').add({
-          deviceId,
-          platform: platform || 'Web Browser',
+          deviceId: safeDeviceId,
+          platform: safePlatform,
           userMessage,
           botReply,
           timestamp: now
