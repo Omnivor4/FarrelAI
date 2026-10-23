@@ -110,12 +110,13 @@
       { "nama": "Mahesa", "panggilan": ["mahesa"], "status": "Teman cowok." },
       { "nama": "Rafi", "panggilan": ["rafi", "anggara raffii"], "status": "Teman cowok." },
       { "nama": "Febri Tari", "panggilan": ["febri", "febri tari"], "status": "Teman cowok jurusan Tari SMKN 12." },
-      { "nama": "Faros", "panggilan": ["faros", "faroz"], "status": "Teman cowok Farrel." },
+      { "nama": "Faros", "panggilan": ["faros", "faroz"], "status": "Teman cowok Farrel yang lagi ngerintis jadi konten kreator." },
       { "nama": "Julian", "panggilan": ["julian"], "status": "Teman cowok Farrel." },
       { "nama": "Aby", "panggilan": ["aby"], "status": "Teman cowok Farrel." },
       { "nama": "Vierantino", "panggilan": ["vierantino", "vino"], "status": "Teman cowok sekolah." },
       { "nama": "Alvino", "panggilan": ["alvino"], "status": "Teman cowok sekolah." },
-      { "nama": "Rasya", "panggilan": ["rasya"], "status": "Teman sekolah SMK." }
+      { "nama": "Rasya", "panggilan": ["rasya"], "status": "Teman sekolah SMK." },
+      { "nama": "dimas", "panggilan": ["dimas"], "status": "Teman cowok smp sekarang skeolah di sman 10 surabaya" }
     ],
     "teman_sekelas_pplg_smk12": [
       { "nama": "Yoga", "panggilan": ["yoga"], "status": "Teman sekelas PPLG SMKN 12 (X-PPLG 2 / XII-PPLG), sering koordinasi project IT/lomba Scratch & Roblox." },
@@ -127,7 +128,12 @@
       { "nama": "Rei Rafan", "panggilan": ["rei rafan", "rei"], "status": "Teman sekelas X-PPLG 1 SMKN 12." },
       { "nama": "Hamda", "panggilan": ["hamda"], "status": "Teman sekelas jurusan PPLG & rekan kelompok Card Game." },
       { "nama": "Adisty", "panggilan": ["adisty"], "status": "Teman sekelas jurusan PPLG & rekan kelompok Card Game." },
-      { "nama": "P.I.X.E.L 2026", "panggilan": ["pixel", "pixel 2026"], "status": "Nama event angkatan kelas PPLG SMKN 12." }
+      { "nama": "P.I.X.E.L 2026", "panggilan": ["pixel", "pixel 2026"], "status": "Nama event angkatan kelas PPLG SMKN 12." },
+      { "nama": "Sahal", "panggilan": ["sahal"], "status": "Teman jurusan PPLG." },
+      { "nama": "Ferris", "panggilan": ["ferris"], "status": "Teman jurusan PPLG." },
+      { "nama": "Shafira", "panggilan": ["shafira"], "status": "Teman cewek jurusan PPLG." },
+      { "nama": "Nona", "panggilan": ["nona"], "status": "Teman cewek jurusan PPLG." },
+      { "nama": "Ragil", "panggilan": ["ragil"], "status": "Teman cowok jurusan PPLG." }
     ],
     "rekan_osis_dan_panitia": [
       { "nama": "Mas Neo", "panggilan": ["mas neo", "neo"], "status": "Senior PPLG SMKN 12 & rekan dekat Farrel dalam editing video/project IT." },
