@@ -19,11 +19,13 @@ app.use(express.json({ limit: '1mb' }));
 app.use(express.static(PUBLIC_DIR));
 
 app.get('/api/health', (req, res) => {
+  const detectedKeys = Object.keys(process.env).filter(k => /gemini|key|token/i.test(k));
   res.json({
     status: 'ok',
     app: 'Farrel Persona Chat',
     version: '1.0.0',
     keysCount: getAvailableApiKeys().length,
+    detectedKeys,
     timestamp: new Date().toISOString()
   });
 });
