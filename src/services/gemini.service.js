@@ -1,6 +1,6 @@
 import { generateSystemInstruction } from './persona.service.js';
 
-const FREE_MODELS = ['gemini-3.5-flash', 'gemini-3.6-flash', 'gemini-flash-latest', 'gemini-3.8-flash'];
+const FREE_MODELS = ['gemini-3.5-flash', 'gemini-3.1-flash-lite', 'gemini-3.6-flash'];
 const DEFAULT_MODEL = 'gemini-3.5-flash';
 const DEPRECATED_OR_PAID = [
   'gemini-4-argon',
@@ -11,7 +11,10 @@ const DEPRECATED_OR_PAID = [
   'gemini-1.5-pro',
   'gemini-2.0-flash',
   'gemini-3.6-flash-lite',
-  'gemini-3.5-flash-lite'
+  'gemini-3.5-flash-lite',
+  'gemini-flash-latest',
+  'gemini-3.8-flash',
+  'gemini-3.7-flash'
 ];
 
 export function buildGeminiPayload(userMessage, chatHistory = [], systemPrompt = '') {
