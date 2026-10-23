@@ -50,8 +50,8 @@ export function chatRateLimit(req, res, next) {
 export function adminBruteForceGuard(req, res, next) {
   const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket?.remoteAddress || 'unknown';
   const now = Date.now();
-  const windowMs = 15 * 60 * 1000;
-  const maxAttempts = 10;
+  const windowMs = 60 * 1000;
+  const maxAttempts = 25;
 
   const client = ipAdminStore.get(ip) || { failures: 0, resetTime: now + windowMs };
 
@@ -63,7 +63,7 @@ export function adminBruteForceGuard(req, res, next) {
   if (client.failures >= maxAttempts) {
     return res.status(429).json({
       success: false,
-      error: 'terlalu banyak percobaan login gagal, silakan coba lagi dalam 15 menit.'
+      error: 'terlalu banyak percobaan login gagal, silakan coba lagi dalam 1 menit.'
     });
   }
 

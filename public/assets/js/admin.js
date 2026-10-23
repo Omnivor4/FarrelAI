@@ -40,7 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       if (!res.ok) {
-        throw new Error('Password salah. Silakan coba lagi.');
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Password salah. Silakan coba lagi.');
       }
 
       adminKey = key;
