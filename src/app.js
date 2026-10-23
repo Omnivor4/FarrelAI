@@ -5,6 +5,8 @@ import apiRoutes from './routes/index.js';
 import { errorHandler } from './middlewares/error.middleware.js';
 import { securityHeaders } from './middlewares/security.middleware.js';
 
+import { getAvailableApiKeys } from './services/gemini.service.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const PUBLIC_DIR = path.resolve(__dirname, '../public');
@@ -21,6 +23,7 @@ app.get('/api/health', (req, res) => {
     status: 'ok',
     app: 'Farrel Persona Chat',
     version: '1.0.0',
+    keysCount: getAvailableApiKeys().length,
     timestamp: new Date().toISOString()
   });
 });

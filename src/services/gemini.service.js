@@ -57,25 +57,30 @@ export function buildGeminiPayload(userMessage, chatHistory = [], systemPrompt =
 }
 
 export function getAvailableApiKeys() {
-  const envSources = [
-    process.env.GEMINI_API_KEY,
-    process.env.GEMINI_API_KEY2,
-    process.env.GEMINI_API_KEY_2,
-    process.env.GEMINI_API_KEY_BACKUP,
-    process.env.GEMINI_API_KEY_CADANGAN
-  ];
-
   const keys = [];
-  for (const src of envSources) {
-    if (!src) continue;
-    const parts = src.split(',');
+  const addKey = (val) => {
+    if (!val) return;
+    const parts = String(val).split(',');
     for (const part of parts) {
       const k = part.trim();
       if (k && k !== 'YOUR_GEMINI_API_KEY_HERE' && !keys.includes(k)) {
         keys.push(k);
       }
     }
+  };
+
+  addKey(process.env.GEMINI_API_KEY);
+  addKey(process.env.GEMINI_API_KEY2);
+  addKey(process.env.GEMINI_API_KEY_2);
+  addKey(process.env.GEMINI_API_KEY_BACKUP);
+  addKey(process.env.GEMINI_API_KEY_CADANGAN);
+
+  for (const [key, val] of Object.entries(process.env)) {
+    if (/gemini.*(key|backup|cadangan|2)/i.test(key)) {
+      addKey(val);
+    }
   }
+
   return keys;
 }
 
@@ -97,8 +102,11 @@ export async function generateReply(userMessage, chatHistory = []) {
 
   for (let keyIndex = 0; keyIndex < apiKeys.length; keyIndex++) {
     const currentApiKey = apiKeys[keyIndex];
+    let keyQuotaExhausted = false;
 
     for (let attempt = 0; attempt < 2; attempt++) {
+      if (keyQuotaExhausted) break;
+
       for (const currentModel of candidateModels) {
         try {
           const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${currentApiKey}`, {
@@ -117,7 +125,7 @@ export async function generateReply(userMessage, chatHistory = []) {
               errorData.error?.status === 'RESOURCE_EXHAUSTED' ||
               /quota|exhausted|rate limit|too many requests|tokens/i.test(message)
             ) {
-              quotaExhausted = true;
+              keyQuotaExhausted = true;
               break;
             }
 
@@ -150,9 +158,13 @@ export async function generateReply(userMessage, chatHistory = []) {
         }
       }
 
-      if (attempt === 0 && quotaExhausted && keyIndex === apiKeys.length - 1) {
+      if (attempt === 0 && keyQuotaExhausted && keyIndex === apiKeys.length - 1) {
         await new Promise(r => setTimeout(r, 1500));
       }
+    }
+
+    if (keyQuotaExhausted && keyIndex === apiKeys.length - 1) {
+      quotaExhausted = true;
     }
   }
 
