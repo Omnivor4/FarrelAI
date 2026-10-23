@@ -1,27 +1,33 @@
 import { generateSystemInstruction } from './persona.service.js';
 
-const FREE_MODELS = ['gemini-3.5-flash', 'gemini-3.1-flash-lite', 'gemini-3.6-flash'];
-const DEFAULT_MODEL = 'gemini-3.5-flash';
+const FREE_MODELS = [
+  'gemini-3.5-flash-lite',
+  'gemini-3.1-flash-lite',
+  'gemini-3.5-flash',
+  'gemini-2.5-flash'
+];
+const DEFAULT_MODEL = 'gemini-3.5-flash-lite';
 const DEPRECATED_OR_PAID = [
   'gemini-4-argon',
   'gemini-3.1-pro-preview',
   'gemini-3-pro-preview',
-  'gemini-2.5-flash',
+  'gemini-2.5-flash-lite',
   'gemini-1.5-flash',
   'gemini-1.5-pro',
   'gemini-2.0-flash',
   'gemini-3.6-flash-lite',
-  'gemini-3.5-flash-lite',
   'gemini-flash-latest',
   'gemini-3.8-flash',
   'gemini-3.7-flash'
 ];
 
 const keyCooldowns = new Map();
+const modelCooldowns = new Map();
 let rotationPointer = 0;
 
 export function resetKeyCooldowns() {
   keyCooldowns.clear();
+  modelCooldowns.clear();
   rotationPointer = 0;
 }
 
@@ -48,10 +54,7 @@ export function buildGeminiPayload(userMessage, chatHistory = [], systemPrompt =
     generationConfig: {
       temperature: 0.7,
       maxOutputTokens: 250,
-      topP: 0.95,
-      thinkingConfig: {
-        thinkingBudget: 0
-      }
+      topP: 0.95
     }
   };
 
@@ -143,9 +146,15 @@ export async function generateReply(userMessage, chatHistory = []) {
 
   for (let keyIndex = 0; keyIndex < apiKeys.length; keyIndex++) {
     const currentApiKey = apiKeys[keyIndex];
-    let keyFailed = false;
+    let keyQuotaHit = false;
 
     for (const currentModel of candidateModels) {
+      const modelKey = `${currentApiKey.slice(-8)}:${currentModel}`;
+      const modelCooldown = modelCooldowns.get(modelKey) || 0;
+      if (Date.now() < modelCooldown) {
+        continue;
+      }
+
       try {
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${currentApiKey}`, {
           method: 'POST',
@@ -157,24 +166,24 @@ export async function generateReply(userMessage, chatHistory = []) {
           const errorData = await response.json().catch(() => ({}));
           const message = errorData.error?.message || `HTTP error ${response.status}`;
 
+          if (response.status === 400 && /API_KEY_INVALID|not valid/i.test(message)) {
+            keyCooldowns.set(currentApiKey, Date.now() + 60 * 60 * 1000);
+            break;
+          }
+
           if (
             response.status === 429 ||
             response.status === 403 ||
             errorData.error?.status === 'RESOURCE_EXHAUSTED' ||
             /quota|exhausted|rate limit|too many requests|tokens/i.test(message)
           ) {
-            keyCooldowns.set(currentApiKey, Date.now() + 10 * 60 * 1000);
-            keyFailed = true;
-            break;
+            modelCooldowns.set(modelKey, Date.now() + 5 * 60 * 1000);
+            keyQuotaHit = true;
+            continue;
           }
 
-          if (response.status === 400 && /API_KEY_INVALID|not valid/i.test(message)) {
-            keyCooldowns.set(currentApiKey, Date.now() + 60 * 60 * 1000);
-            keyFailed = true;
-            break;
-          }
-
-          if (/no longer available|not found|not supported|unsupported/i.test(message)) {
+          if (response.status === 404 || /no longer available|not found|not supported|unsupported/i.test(message)) {
+            modelCooldowns.set(modelKey, Date.now() + 30 * 60 * 1000);
             continue;
           }
 
@@ -193,6 +202,7 @@ export async function generateReply(userMessage, chatHistory = []) {
 
         if (replyText && replyText.trim().length > 0) {
           keyCooldowns.delete(currentApiKey);
+          modelCooldowns.delete(modelKey);
           let cleaned = replyText.trim();
           cleaned = cleaned.replace(/(\p{L}+)-(\p{L}+)/gu, (match, p1, p2) => p1 + ' ' + p2);
           cleaned = cleaned.replace(/\s*[-–—]+\s*/g, ' ');
@@ -204,7 +214,8 @@ export async function generateReply(userMessage, chatHistory = []) {
       }
     }
 
-    if (keyFailed && keyIndex === apiKeys.length - 1) {
+    if (keyQuotaHit) {
+      keyCooldowns.set(currentApiKey, Date.now() + 5 * 60 * 1000);
       quotaExhausted = true;
     }
   }
