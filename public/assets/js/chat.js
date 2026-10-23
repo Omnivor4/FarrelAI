@@ -190,8 +190,6 @@ document.addEventListener('DOMContentLoaded', () => {
           if (autoScrollActive) {
             scrollToBottom(false);
           }
-        } else {
-          inputSectionContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
       } else {
         document.body.classList.remove('keyboard-open');
@@ -204,20 +202,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   chatInput.addEventListener('focus', () => {
     autoScrollActive = true;
-    setTimeout(() => {
-      if (inputSectionContainer.classList.contains('pinned-bottom')) {
-        scrollToBottom(true);
-      } else {
-        inputSectionContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
-    }, 120);
-    setTimeout(() => {
-      if (inputSectionContainer.classList.contains('pinned-bottom')) {
-        scrollToBottom(true);
-      } else {
-        inputSectionContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
-    }, 320);
+    if (inputSectionContainer.classList.contains('pinned-bottom')) {
+      setTimeout(() => scrollToBottom(true), 120);
+      setTimeout(() => scrollToBottom(true), 320);
+    }
   });
 
   chatInput.addEventListener('blur', () => {

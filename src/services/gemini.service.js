@@ -62,7 +62,7 @@ export async function generateReply(userMessage, chatHistory = []) {
   let model = DEPRECATED_OR_PAID.includes(rawModel) ? DEFAULT_MODEL : rawModel;
 
   if (!apiKey || apiKey === 'YOUR_GEMINI_API_KEY_HERE') {
-    return 'Waduh bro, API Key-mu belum dipasang di file .env nih! Masukin dulu GEMINI_API_KEY-nya biar gw bisa mikir beneran, wkwk.';
+    return 'waduh kayanya ini tokennya habis deh, maaf ya';
   }
 
   const systemPrompt = await generateSystemInstruction(userMessage, chatHistory);

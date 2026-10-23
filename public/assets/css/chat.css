@@ -2,8 +2,6 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  min-height: 100dvh;
-  min-height: -webkit-fill-available;
   position: relative;
   background-color: var(--bg-primary);
 }
@@ -689,12 +687,12 @@
 
 @media (max-width: 680px) {
   .app-header {
-    height: calc(58px + env(safe-area-inset-top, 0px));
-    padding: env(safe-area-inset-top, 0px) 18px 0;
+    height: 58px;
+    padding: 0 18px;
   }
 
   .main-content {
-    padding: calc(72px + env(safe-area-inset-top, 0px)) 14px 24px;
+    padding: 72px 14px 24px;
   }
 
   .hero-wrapper {
@@ -771,26 +769,6 @@
     padding: 22px;
     border-radius: 18px;
     max-width: 90%;
-  }
-
-  body.keyboard-open .hero-wrapper:not(.hidden) {
-    margin-bottom: 12px;
-    max-height: 80px;
-  }
-
-  body.keyboard-open .hero-title {
-    font-size: 26px;
-    margin-bottom: 6px;
-  }
-
-  body.keyboard-open .hero-subtitle {
-    display: none;
-  }
-
-  body.keyboard-open .main-content {
-    padding-top: calc(54px + env(safe-area-inset-top, 0px));
-    padding-bottom: 10px;
-    justify-content: flex-start;
   }
 
   body.keyboard-open .input-section-container.pinned-bottom {
