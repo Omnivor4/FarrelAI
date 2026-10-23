@@ -1,4 +1,4 @@
-import { getOrCreateDeviceId, detectPlatform } from './utils/device.js';
+import { getOrCreateDeviceId, detectPlatform, detectDetailedPlatform } from './utils/device.js';
 import { sendChatMessage } from './api.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -17,7 +17,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const quotaBanner = document.getElementById('quotaBanner');
 
   const deviceId = getOrCreateDeviceId();
-  const platform = detectPlatform();
+  let platform = detectPlatform();
+  detectDetailedPlatform().then(p => {
+    if (p) platform = p;
+  });
   const conversationHistory = [];
   let isGenerating = false;
   let autoScrollActive = true;
