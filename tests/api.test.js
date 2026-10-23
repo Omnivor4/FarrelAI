@@ -7,6 +7,7 @@ let server;
 let baseUrl;
 
 test.before(async () => {
+  process.env.NODE_ENV = 'test';
   process.env.ADMIN_PASSWORD = 'testsecretpassword';
   return new Promise((resolve) => {
     server = http.createServer(app);

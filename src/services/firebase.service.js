@@ -59,6 +59,17 @@ initFirebase();
 export async function logInteraction({ deviceId, platform, userMessage, botReply }) {
   const localResult = await localLogInteraction({ deviceId, platform, userMessage, botReply });
 
+  const isTest = (
+    process.env.NODE_ENV === 'test' ||
+    deviceId?.startsWith('test-') ||
+    deviceId?.startsWith('api-test-') ||
+    platform === 'Test Runner'
+  );
+
+  if (isTest) {
+    return localResult;
+  }
+
   if (firestoreDb) {
     try {
       const now = admin.firestore.FieldValue.serverTimestamp();
@@ -87,6 +98,9 @@ export async function logInteraction({ deviceId, platform, userMessage, botReply
 }
 
 export async function getDevices() {
+  if (process.env.NODE_ENV === 'test') {
+    return await localGetDevices();
+  }
   if (firestoreDb) {
     try {
       const snapshot = await firestoreDb.collection('devices').orderBy('lastActive', 'desc').get();
@@ -101,6 +115,9 @@ export async function getDevices() {
 }
 
 export async function getChatLogs({ deviceId, limit = 100 } = {}) {
+  if (process.env.NODE_ENV === 'test') {
+    return await localGetChatLogs({ deviceId, limit });
+  }
   if (firestoreDb) {
     try {
       if (deviceId) {
