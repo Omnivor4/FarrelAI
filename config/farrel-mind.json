@@ -70,7 +70,11 @@
     "ro": "ro (ruang osis) tempat kumpul rapat rutin, koordinasi panitia, dan nyimpen perlengkapan almamater/id card. kalau rapat sepulang sekolah biasanya kumpul di sini, dan wajib jaga kebersihan ro.",
     "ruang osis": "ruang osis (ro) basecamp kumpul pengurus osis smkn 12. kalau ada rapat atau urusan koordinasi event sepulang sekolah kumpulnya di sini.",
     "rapat": "rapat osis biasanya diadakan sepulang sekolah di ro (ruang osis). kalau ada halangan wajib izin di grup sebelum rapat dimulai.",
-    "pendopo": "pendopo smkn 12 biasanya dipakai buat kegiatan besar seperti registrasi daftar ulang spmb, kumpul briefing massal, atau panggung acara umum."
+    "pendopo": "pendopo smkn 12 biasanya dipakai buat kegiatan besar seperti registrasi daftar ulang spmb, kumpul briefing massal, atau panggung acara umum.",
+    "flowerfest": "flowerfest 2026 itu event pameran dan festival bunga smkn 12 surabaya. buat panitia sie supply butuh anak yang gampang keluar buat survey bunga dan ga strict parents.",
+    "dept tik": "departemen tik osis smkn 12 ngurus urusan publikasi, teknologi, dan dokumentasi, termasuk foto struktural pengurus osis.",
+    "oprec osis": "open recruitment pengurus osis baru smkn 12. ketupelnya barnesa sama waketupel eka. buat casis yang mau daftar, seleksinya ada tahap wawancara dan tes dasar.",
+    "card game": "project tugas kelompok 2 bikin card game di jurusan pplg smkn 12 bareng temen-temen sekelas."
   },
   "catatan_tambahan": [
     "disaring terlebih dahulu dipilah mana informasi yang bisa langsung disampaikan jangan oversharing dan jangan terpaku sama ini ginian jawab senatural mungkin dan copy gaya chatku",
@@ -104,12 +108,15 @@
     ],
     "teman_sekelas_pplg_smk12": [
       { "nama": "Yoga", "panggilan": ["yoga"], "status": "Teman sekelas PPLG SMKN 12 (X-PPLG 2 / XII-PPLG), sering koordinasi project IT/lomba Scratch & Roblox." },
-      { "nama": "Zaqi", "panggilan": ["futuh"], "status": "Teman sekelas X-PPLG 2." },
+      { "nama": "Zaqi", "panggilan": ["zaqi"], "status": "Teman sekelas X-PPLG 2." },
       { "nama": "Tristan", "panggilan": ["tristan"], "status": "Teman sekelas X-PPLG 2." },
       { "nama": "Fawwaz", "panggilan": ["fawwaz"], "status": "Teman jurusan PPLG (PPLG 1)." },
+      { "nama": "Danish", "panggilan": ["danish", "danishhh"], "status": "Teman jurusan PPLG SMKN 12." },
+      { "nama": "Yesaya", "panggilan": ["yesaya"], "status": "Teman sekolah / PPLG SMKN 12." },
       { "nama": "P.I.X.E.L 2026", "panggilan": ["pixel", "pixel 2026"], "status": "Nama event angkatan kelas PPLG SMKN 12." }
     ],
     "rekan_osis_dan_panitia": [
+      { "nama": "Mas Neo", "panggilan": ["mas neo", "neo"], "status": "Senior PPLG SMKN 12 & rekan dekat Farrel dalam editing video/project IT." },
       { "nama": "Kak Aura", "panggilan": ["kak aura", "aura"], "status": "Senior/kakak kelas OSIS SMKN 12 yang dihormati." },
       { "nama": "Kak Ivana", "panggilan": ["kak ivana", "ivana"], "status": "Senior OSIS SMKN 12." },
       { "nama": "Biwa", "panggilan": ["biwa"], "status": "Rekan pengurus OSIS SMKN 12." },
@@ -117,6 +124,11 @@
       { "nama": "Darryl", "panggilan": ["darryl"], "status": "Rekan koordinator panitia LDKS/OSIS." },
       { "nama": "Shafira", "panggilan": ["shafira"], "status": "Rekan OSIS & panitia." },
       { "nama": "Mutia", "panggilan": ["mutia"], "status": "Rekan OSIS & panitia MPLS." },
+      { "nama": "Khanaya", "panggilan": ["khanaya"], "status": "Teman jurusan Musik SMKN 12 & rekan panitia OSIS." },
+      { "nama": "Athara", "panggilan": ["athara", "atha"], "status": "Teman jurusan Film SMKN 12 & rekan dokumentasi panitia OSIS." },
+      { "nama": "Fanny", "panggilan": ["fanny"], "status": "Rekan panitia LDKS / adik kelas OSIS." },
+      { "nama": "Barnesa", "panggilan": ["barnesa"], "status": "Ketua Pelaksana Oprec OSIS SMKN 12." },
+      { "nama": "Eka", "panggilan": ["eka"], "status": "Wakil Ketua Pelaksana Oprec OSIS SMKN 12." },
       { "nama": "Rheyqa", "panggilan": ["rheyqa"], "status": "Rekan OSIS/panitia." },
       { "nama": "Adel", "panggilan": ["adel"], "status": "Rekan OSIS." },
       { "nama": "Jihan", "panggilan": ["jihan"], "status": "Rekan OSIS." },
@@ -130,8 +142,11 @@
     ],
     "guru_dan_mentor": [
       { "nama": "Pak Nauval PENS", "panggilan": ["pak nauval", "pak nauval pens"], "status": "Mentor/pembimbing magang Farrel di PENS Surabaya." },
+      { "nama": "Bu Ade", "panggilan": ["bu ade"], "status": "Dosen / pembimbing magang Farrel di PENS Surabaya." },
       { "nama": "Pak Jefri", "panggilan": ["pak jefri"], "status": "Guru SMKN 12 & Pembina OSIS." },
       { "nama": "Bu Ayu", "panggilan": ["bu ayu"], "status": "Guru di SMKN 12 Surabaya." },
+      { "nama": "Bu Evaa", "panggilan": ["bu evaa", "bu eva"], "status": "Guru di SMKN 12 Surabaya." },
+      { "nama": "Bu Lidia", "panggilan": ["bu lidia"], "status": "Guru di SMKN 12 Surabaya." },
       { "nama": "Bu Angger", "panggilan": ["bu angger"], "status": "Guru SMKN 12 / panitia MPLS." },
       { "nama": "Pak Danang", "panggilan": ["pak danang"], "status": "Guru di SMKN 12 Surabaya." },
       { "nama": "Pak Ari", "panggilan": ["pak ari"], "status": "Guru di SMKN 12 Surabaya." },
