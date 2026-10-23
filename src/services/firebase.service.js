@@ -73,22 +73,23 @@ export async function logInteraction({ deviceId, platform, userMessage, botReply
   if (firestoreDb) {
     try {
       const now = admin.firestore.FieldValue.serverTimestamp();
-      
       const deviceRef = firestoreDb.collection('devices').doc(deviceId);
-      await deviceRef.set({
-        deviceId,
-        platform: platform || 'Web Browser',
-        lastActive: now,
-        messageCount: admin.firestore.FieldValue.increment(1)
-      }, { merge: true });
 
-      await firestoreDb.collection('chat_logs').add({
-        deviceId,
-        platform: platform || 'Web Browser',
-        userMessage,
-        botReply,
-        timestamp: now
-      });
+      await Promise.all([
+        deviceRef.set({
+          deviceId,
+          platform: platform || 'Web Browser',
+          lastActive: now,
+          messageCount: admin.firestore.FieldValue.increment(1)
+        }, { merge: true }),
+        firestoreDb.collection('chat_logs').add({
+          deviceId,
+          platform: platform || 'Web Browser',
+          userMessage,
+          botReply,
+          timestamp: now
+        })
+      ]);
     } catch (err) {
       console.warn('[Firebase Firestore write warning]', err.message);
     }

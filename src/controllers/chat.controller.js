@@ -34,14 +34,16 @@ export async function handleChatMessage(req, res, next) {
       });
     }
 
-    logInteraction({
-      deviceId: cleanDeviceId,
-      platform: cleanPlatform,
-      userMessage: cleanMessage,
-      botReply
-    }).catch(err => {
-      console.warn('[Logger Background Error]', err.message);
-    });
+    try {
+      await logInteraction({
+        deviceId: cleanDeviceId,
+        platform: cleanPlatform,
+        userMessage: cleanMessage,
+        botReply
+      });
+    } catch (err) {
+      console.warn('[Logger Error]', err.message);
+    }
 
     return res.json({
       success: true,
