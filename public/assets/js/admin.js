@@ -194,8 +194,24 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchLogs();
   });
 
-  exportBtn.addEventListener('click', () => {
-    window.open(`/api/admin/export?adminKey=${encodeURIComponent(adminKey)}`, '_blank');
+  exportBtn.addEventListener('click', async () => {
+    try {
+      const res = await fetch('/api/admin/export', {
+        headers: { 'x-admin-key': adminKey }
+      });
+      if (!res.ok) throw new Error('Gagal mengunduh file log.');
+      const blob = await res.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.download = 'chat-log.txt';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (err) {
+      alert(err.message || 'Gagal mengunduh log.');
+    }
   });
 
   function escapeHtml(str) {

@@ -1,12 +1,5 @@
 {
   "version": 2,
-  "redirects": [
-    {
-      "source": "/admin",
-      "destination": "/farrelai",
-      "permanent": false
-    }
-  ],
   "rewrites": [
     {
       "source": "/farrelai",

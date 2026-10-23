@@ -82,8 +82,8 @@ test('UI: /farrelai serves admin dashboard', async () => {
   assert.ok(text.includes('Dasbor Admin') || text.includes('admin.js'));
 });
 
-test('UI: /admin redirects to /farrelai', async () => {
+test('UI: /admin does not expose admin dashboard', async () => {
   const res = await fetch(`${baseUrl}/admin`, { redirect: 'manual' });
-  assert.equal(res.status, 302);
-  assert.equal(res.headers.get('location'), '/farrelai');
+  assert.notEqual(res.headers.get('location'), '/farrelai');
+  assert.equal(res.status, 404);
 });

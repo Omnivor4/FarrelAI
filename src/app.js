@@ -31,10 +31,6 @@ app.get('/farrelai', (req, res) => {
   res.sendFile(path.join(PUBLIC_DIR, 'farrelai.html'));
 });
 
-app.get('/admin', (req, res) => {
-  res.redirect('/farrelai');
-});
-
 app.get('/', (req, res) => {
   res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
 });
