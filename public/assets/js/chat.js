@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (quotaModal) quotaModal.classList.add('active');
       if (quotaBanner) quotaBanner.style.display = 'flex';
       chatInput.disabled = true;
-      chatInput.placeholder = 'Batas token harian sedang habis...';
+      chatInput.placeholder = 'Token e lagi habis bro, tunggu besok ya...';
       sendBtn.disabled = true;
     } else {
       localStorage.removeItem('farrelai_quota_exhausted');

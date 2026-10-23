@@ -30,7 +30,7 @@ export async function handleChatMessage(req, res, next) {
       return res.status(429).json({
         success: false,
         quotaExhausted: true,
-        error: 'Token harian habis. Coba lagi besok atau nanti malam saat kuota di-reset.'
+        error: 'Yailah token e habis, tunggu besok ya atau nanti malem sapa tau ws reset.'
       });
     }
 
@@ -52,7 +52,7 @@ export async function handleChatMessage(req, res, next) {
       return res.status(429).json({
         success: false,
         quotaExhausted: true,
-        error: 'Token harian habis. Coba lagi besok atau nanti malam saat kuota di-reset.'
+        error: 'Yailah token e habis, tunggu besok ya atau nanti malem sapa tau ws reset.'
       });
     }
     next(err);
