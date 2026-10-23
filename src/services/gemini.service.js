@@ -67,6 +67,8 @@ export async function generateReply(userMessage, chatHistory = []) {
 
   const candidateModels = [model, ...FREE_MODELS.filter(m => m !== model)];
 
+  let quotaExhausted = false;
+
   for (const currentModel of candidateModels) {
     try {
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${apiKey}`, {
@@ -85,7 +87,8 @@ export async function generateReply(userMessage, chatHistory = []) {
           errorData.error?.status === 'RESOURCE_EXHAUSTED' ||
           /quota|exhausted|rate limit|too many requests|tokens/i.test(message)
         ) {
-          return 'Yailah token e habis, tunggu besok ya atau ngga nanti malem sapa tau ws reset';
+          quotaExhausted = true;
+          continue;
         }
 
         if (/no longer available|not found|not supported|unsupported/i.test(message)) {
@@ -111,6 +114,10 @@ export async function generateReply(userMessage, chatHistory = []) {
     } catch (netErr) {
       console.error(`[Gemini Network Error - ${currentModel}]`, netErr.message);
     }
+  }
+
+  if (quotaExhausted) {
+    return 'Yailah token e habis, tunggu besok ya atau ngga nanti malem sapa tau ws reset';
   }
 
   return 'waduh, lagi agak error nih koneksinya, coba tanya sekali lagi ya bro.';
