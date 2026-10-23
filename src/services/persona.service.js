@@ -167,6 +167,8 @@ export async function generateSystemInstruction(userQuery = '', chatHistory = []
 
   if (cachedPersona.fewShotExamples && cachedPersona.fewShotExamples.length > 0) {
     lines.push('\nCONTOH GAYA JAWABANMU:');
+    const isAskingSmoking = lowerQ.includes('rokok') || lowerQ.includes('ngerokok') || lowerQ.includes('merokok') || lowerQ.includes('vape') || lowerQ.includes('pod') || lowerQ.includes('udud');
+    const isAskingParents = lowerQ.includes('orang tua') || lowerQ.includes('orangtua') || lowerQ.includes('bapak') || lowerQ.includes('ibu') || lowerQ.includes('ayah') || lowerQ.includes('mama') || lowerQ.includes('mami');
     const isAskingMeta = lowerQ.includes('update') || lowerQ.includes('data') || lowerQ.includes('ai') || lowerQ.includes('bot') || lowerQ.includes('robot') || lowerQ.includes('sistem') || lowerQ.includes('gemini') || lowerQ.includes('katakan') || lowerQ.includes('model');
     const isAskingMantan = lowerQ.includes('mantan') || lowerQ.includes('pacar') || lowerQ.includes('ex') || lowerQ.includes('julia') || lowerQ.includes('jul');
     const isJailbreak = lowerQ.includes('ignore') || lowerQ.includes('prompt') || lowerQ.includes('dan') || lowerQ.includes('override') || lowerQ.includes('jailbreak') || lowerQ.includes('bypass') || lowerQ.includes('roleplay') || lowerQ.includes('simulasi');
@@ -175,6 +177,10 @@ export async function generateSystemInstruction(userQuery = '', chatHistory = []
     let selected = [];
     if (isJuliaChatting) {
       selected = cachedPersona.fewShotExamples.filter(ex => ex.user.toLowerCase().includes('ini julia') || ex.reply.toLowerCase().includes('bahagia ya')).slice(0, 3);
+    } else if (isAskingSmoking) {
+      selected = cachedPersona.fewShotExamples.filter(ex => ex.user.toLowerCase().includes('rokok') || ex.user.toLowerCase().includes('vape')).slice(0, 3);
+    } else if (isAskingParents) {
+      selected = cachedPersona.fewShotExamples.filter(ex => ex.user.toLowerCase().includes('orang tua') || ex.user.toLowerCase().includes('bapak')).slice(0, 3);
     } else if (isSecretRefusal) {
       selected = cachedPersona.fewShotExamples.filter(ex => ex.user.toLowerCase().includes('gaperlu') || ex.user.toLowerCase().includes('rahasia')).slice(0, 3);
     } else if (isJailbreak) {
