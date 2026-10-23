@@ -17,6 +17,14 @@ const DEPRECATED_OR_PAID = [
   'gemini-3.7-flash'
 ];
 
+const keyCooldowns = new Map();
+let rotationPointer = 0;
+
+export function resetKeyCooldowns() {
+  keyCooldowns.clear();
+  rotationPointer = 0;
+}
+
 export function buildGeminiPayload(userMessage, chatHistory = [], systemPrompt = '') {
   const contents = [];
 
@@ -70,13 +78,19 @@ export function getAvailableApiKeys() {
   };
 
   addKey(process.env.GEMINI_API_KEY);
+  addKey(process.env.GEMINI_API_KEY1);
   addKey(process.env.GEMINI_API_KEY2);
   addKey(process.env.GEMINI_API_KEY_2);
+  addKey(process.env.GEMINI_API_KEY3);
+  addKey(process.env.GEMINI_API_KEY_3);
+  addKey(process.env.GEMINI_API_KEY4);
+  addKey(process.env.GEMINI_API_KEY_4);
+  addKey(process.env.GEMINI_API_KEY5);
   addKey(process.env.GEMINI_API_KEY_BACKUP);
   addKey(process.env.GEMINI_API_KEY_CADANGAN);
 
   for (const [key, val] of Object.entries(process.env)) {
-    if (/gemini.*(key|backup|cadangan|2)/i.test(key)) {
+    if (/gemini.*(key|backup|cadangan|\d)/i.test(key) && !/model/i.test(key)) {
       addKey(val);
     }
   }
@@ -84,86 +98,113 @@ export function getAvailableApiKeys() {
   return keys;
 }
 
+function getRotatedKeys(keys) {
+  if (!keys || keys.length <= 1) return keys || [];
+  const now = Date.now();
+  const healthy = [];
+  const cooling = [];
+
+  for (const k of keys) {
+    const expiry = keyCooldowns.get(k) || 0;
+    if (now < expiry) {
+      cooling.push(k);
+    } else {
+      healthy.push(k);
+    }
+  }
+
+  const result = [];
+  if (healthy.length > 0) {
+    const start = rotationPointer % healthy.length;
+    rotationPointer = (rotationPointer + 1) % healthy.length;
+    for (let i = 0; i < healthy.length; i++) {
+      result.push(healthy[(start + i) % healthy.length]);
+    }
+  }
+
+  return [...result, ...cooling];
+}
+
 export async function generateReply(userMessage, chatHistory = []) {
-  const apiKeys = getAvailableApiKeys();
+  const allApiKeys = getAvailableApiKeys();
   const rawModel = process.env.GEMINI_MODEL?.trim() || DEFAULT_MODEL;
   let model = DEPRECATED_OR_PAID.includes(rawModel) ? DEFAULT_MODEL : rawModel;
 
-  if (apiKeys.length === 0) {
+  if (allApiKeys.length === 0) {
     return 'waduh bro, API key belum dipasang nih di file .env. masukin dulu GEMINI_API_KEY biar bisa ngobrol wkwk.';
   }
 
   const systemPrompt = await generateSystemInstruction(userMessage, chatHistory);
   const payload = buildGeminiPayload(userMessage, chatHistory, systemPrompt);
-
   const candidateModels = [model, ...FREE_MODELS.filter(m => m !== model)];
 
+  const apiKeys = getRotatedKeys(allApiKeys);
   let quotaExhausted = false;
 
   for (let keyIndex = 0; keyIndex < apiKeys.length; keyIndex++) {
     const currentApiKey = apiKeys[keyIndex];
-    let keyQuotaExhausted = false;
+    let keyFailed = false;
 
-    for (let attempt = 0; attempt < 2; attempt++) {
-      if (keyQuotaExhausted) break;
+    for (const currentModel of candidateModels) {
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${currentApiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
 
-      for (const currentModel of candidateModels) {
-        try {
-          const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${currentApiKey}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          const message = errorData.error?.message || `HTTP error ${response.status}`;
 
-          if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            const message = errorData.error?.message || `HTTP error ${response.status}`;
+          if (
+            response.status === 429 ||
+            response.status === 403 ||
+            errorData.error?.status === 'RESOURCE_EXHAUSTED' ||
+            /quota|exhausted|rate limit|too many requests|tokens/i.test(message)
+          ) {
+            keyCooldowns.set(currentApiKey, Date.now() + 10 * 60 * 1000);
+            keyFailed = true;
+            break;
+          }
 
-            if (
-              response.status === 429 ||
-              response.status === 403 ||
-              errorData.error?.status === 'RESOURCE_EXHAUSTED' ||
-              /quota|exhausted|rate limit|too many requests|tokens/i.test(message)
-            ) {
-              keyQuotaExhausted = true;
-              break;
-            }
+          if (response.status === 400 && /API_KEY_INVALID|not valid/i.test(message)) {
+            keyCooldowns.set(currentApiKey, Date.now() + 60 * 60 * 1000);
+            keyFailed = true;
+            break;
+          }
 
-            if (/no longer available|not found|not supported|unsupported/i.test(message)) {
-              continue;
-            }
-
-            console.error(`[Gemini API Error - ${currentModel}]`, message);
+          if (/no longer available|not found|not supported|unsupported/i.test(message)) {
             continue;
           }
 
-          const data = await response.json();
-          const blockReason = data.promptFeedback?.blockReason || data.candidates?.[0]?.finishReason;
-          if (blockReason === 'SAFETY' || blockReason === 'BLOCKLIST' || blockReason === 'PROHIBITED_CONTENT') {
-            return 'waduh topiknya terlalu sensitif rek, mending bahas yang lain aja wkwk';
-          }
-
-          const candidate = data.candidates?.[0];
-          const replyText = candidate?.content?.parts?.[0]?.text;
-
-          if (replyText && replyText.trim().length > 0) {
-            let cleaned = replyText.trim();
-            cleaned = cleaned.replace(/(\p{L}+)-(\p{L}+)/gu, (match, p1, p2) => p1 + ' ' + p2);
-            cleaned = cleaned.replace(/\s*[-–—]+\s*/g, ' ');
-            cleaned = cleaned.replace(/\s{2,}/g, ' ');
-            return cleaned.trim();
-          }
-        } catch (netErr) {
-          console.error(`[Gemini Network Error - ${currentModel}]`, netErr.message);
+          console.error(`[Gemini API Error - ${currentModel}]`, message);
+          continue;
         }
-      }
 
-      if (attempt === 0 && keyQuotaExhausted && keyIndex === apiKeys.length - 1) {
-        await new Promise(r => setTimeout(r, 1500));
+        const data = await response.json();
+        const blockReason = data.promptFeedback?.blockReason || data.candidates?.[0]?.finishReason;
+        if (blockReason === 'SAFETY' || blockReason === 'BLOCKLIST' || blockReason === 'PROHIBITED_CONTENT') {
+          return 'waduh topiknya terlalu sensitif rek, mending bahas yang lain aja wkwk';
+        }
+
+        const candidate = data.candidates?.[0];
+        const replyText = candidate?.content?.parts?.[0]?.text;
+
+        if (replyText && replyText.trim().length > 0) {
+          keyCooldowns.delete(currentApiKey);
+          let cleaned = replyText.trim();
+          cleaned = cleaned.replace(/(\p{L}+)-(\p{L}+)/gu, (match, p1, p2) => p1 + ' ' + p2);
+          cleaned = cleaned.replace(/\s*[-–—]+\s*/g, ' ');
+          cleaned = cleaned.replace(/\s{2,}/g, ' ');
+          return cleaned.trim();
+        }
+      } catch (netErr) {
+        console.error(`[Gemini Network Error - ${currentModel}]`, netErr.message);
       }
     }
 
-    if (keyQuotaExhausted && keyIndex === apiKeys.length - 1) {
+    if (keyFailed && keyIndex === apiKeys.length - 1) {
       quotaExhausted = true;
     }
   }
