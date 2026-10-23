@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const brandHomeBtn = document.getElementById('brandHomeBtn');
   const quotaModal = document.getElementById('quotaModal');
   const closeQuotaModalBtn = document.getElementById('closeQuotaModalBtn');
+  const retryQuotaBtn = document.getElementById('retryQuotaBtn');
   const quotaBanner = document.getElementById('quotaBanner');
 
   const deviceId = getOrCreateDeviceId();
@@ -61,6 +62,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (isQuotaExhausted()) {
     setQuotaExhaustedState(true);
+  }
+
+  if (retryQuotaBtn) {
+    retryQuotaBtn.addEventListener('click', () => {
+      setQuotaExhaustedState(false);
+      chatInput.focus();
+    });
+  }
+
+  if (quotaBanner) {
+    quotaBanner.style.cursor = 'pointer';
+    quotaBanner.addEventListener('click', () => {
+      setQuotaExhaustedState(false);
+      chatInput.focus();
+    });
   }
 
   if (closeQuotaModalBtn) {
