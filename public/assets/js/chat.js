@@ -61,6 +61,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  setQuotaExhaustedState(false);
+
   if (retryQuotaBtn) {
     retryQuotaBtn.addEventListener('click', () => {
       setQuotaExhaustedState(false);
@@ -78,14 +80,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (closeQuotaModalBtn) {
     closeQuotaModalBtn.addEventListener('click', () => {
-      if (quotaModal) quotaModal.classList.remove('active');
+      setQuotaExhaustedState(false);
+      chatInput.focus();
     });
   }
 
   if (quotaModal) {
     quotaModal.addEventListener('click', (e) => {
       if (e.target === quotaModal) {
-        quotaModal.classList.remove('active');
+        setQuotaExhaustedState(false);
+        chatInput.focus();
       }
     });
   }
