@@ -2,6 +2,8 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
   position: relative;
   background-color: var(--bg-primary);
 }
@@ -152,7 +154,7 @@
   width: 100%;
   flex-direction: column;
   gap: 20px;
-  padding-bottom: 220px;
+  padding-bottom: calc(220px + var(--keyboard-height, 0px));
   padding-top: 10px;
   opacity: 0;
   transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -298,7 +300,7 @@
 
 .input-section-container.pinned-bottom {
   position: fixed;
-  bottom: 0;
+  bottom: var(--keyboard-height, 0px);
   left: 0;
   right: 0;
   width: 100%;
@@ -311,6 +313,7 @@
   z-index: 50;
   pointer-events: none;
   animation: dockBottom 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: bottom 0.15s ease-out;
 }
 
 .input-section-container.pinned-bottom .chat-input-pill,
@@ -343,12 +346,13 @@
   flex: 1;
   background: transparent;
   color: #ffffff;
-  font-size: 15px;
+  font-size: 16px;
   resize: none;
   min-height: 24px;
   max-height: 120px;
   line-height: 1.5;
   transition: height 0.15s ease;
+  -webkit-text-size-adjust: 100%;
 }
 
 .chat-textarea::placeholder {
@@ -462,6 +466,8 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
   max-width: 460px;
+  max-height: 85vh;
+  overflow-y: auto;
   width: 100%;
   padding: 28px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
@@ -541,6 +547,8 @@
   border: 1px solid rgba(229, 138, 92, 0.25);
   border-radius: 24px;
   max-width: 440px;
+  max-height: 85vh;
+  overflow-y: auto;
   width: 100%;
   padding: 34px 28px 28px;
   text-align: center;
@@ -681,12 +689,12 @@
 
 @media (max-width: 680px) {
   .app-header {
-    height: 58px;
-    padding: 0 18px;
+    height: calc(58px + env(safe-area-inset-top, 0px));
+    padding: env(safe-area-inset-top, 0px) 18px 0;
   }
 
   .main-content {
-    padding: 72px 14px 24px;
+    padding: calc(72px + env(safe-area-inset-top, 0px)) 14px 24px;
   }
 
   .hero-wrapper {
@@ -707,7 +715,7 @@
 
   .chat-history-container {
     gap: 16px;
-    padding-bottom: 190px;
+    padding-bottom: calc(180px + var(--keyboard-height, 0px));
   }
 
   .message-bubble {
@@ -725,7 +733,9 @@
   }
 
   .input-section-container.pinned-bottom {
-    padding: 20px 14px calc(14px + env(safe-area-inset-bottom, 0px));
+    bottom: var(--keyboard-height, 0px);
+    padding: 16px 14px calc(14px + env(safe-area-inset-bottom, 0px));
+    transition: bottom 0.15s ease-out;
   }
 
   .chat-input-pill {
@@ -735,15 +745,15 @@
   }
 
   .chat-textarea {
-    font-size: 15px;
-    min-height: 22px;
+    font-size: 16px;
+    min-height: 24px;
     line-height: 1.45;
   }
 
   .send-button {
-    width: 40px;
-    height: 40px;
-    border-radius: 11px;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
   }
 
   .send-button svg {
@@ -761,6 +771,34 @@
     padding: 22px;
     border-radius: 18px;
     max-width: 90%;
+  }
+
+  body.keyboard-open .hero-wrapper:not(.hidden) {
+    margin-bottom: 12px;
+    max-height: 80px;
+  }
+
+  body.keyboard-open .hero-title {
+    font-size: 26px;
+    margin-bottom: 6px;
+  }
+
+  body.keyboard-open .hero-subtitle {
+    display: none;
+  }
+
+  body.keyboard-open .main-content {
+    padding-top: calc(54px + env(safe-area-inset-top, 0px));
+    padding-bottom: 10px;
+    justify-content: flex-start;
+  }
+
+  body.keyboard-open .input-section-container.pinned-bottom {
+    padding: 10px 14px 10px;
+  }
+
+  body.keyboard-open .disclaimer-text {
+    display: none;
   }
 }
 
@@ -785,7 +823,7 @@
   }
 
   .send-button {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
   }
 }

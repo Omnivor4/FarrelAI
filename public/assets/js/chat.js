@@ -175,6 +175,60 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, { passive: true });
 
+  if (window.visualViewport) {
+    const handleViewportChange = () => {
+      const vv = window.visualViewport;
+      const windowH = window.innerHeight;
+      const rawOffset = windowH - (vv.height + (vv.offsetTop || 0));
+      const keyboardHeight = rawOffset > 100 ? Math.round(rawOffset) : 0;
+
+      document.documentElement.style.setProperty('--keyboard-height', `${keyboardHeight}px`);
+
+      if (keyboardHeight > 0) {
+        document.body.classList.add('keyboard-open');
+        if (inputSectionContainer.classList.contains('pinned-bottom')) {
+          if (autoScrollActive) {
+            scrollToBottom(false);
+          }
+        } else {
+          inputSectionContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      } else {
+        document.body.classList.remove('keyboard-open');
+      }
+    };
+
+    window.visualViewport.addEventListener('resize', handleViewportChange);
+    window.visualViewport.addEventListener('scroll', handleViewportChange);
+  }
+
+  chatInput.addEventListener('focus', () => {
+    autoScrollActive = true;
+    setTimeout(() => {
+      if (inputSectionContainer.classList.contains('pinned-bottom')) {
+        scrollToBottom(true);
+      } else {
+        inputSectionContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }, 120);
+    setTimeout(() => {
+      if (inputSectionContainer.classList.contains('pinned-bottom')) {
+        scrollToBottom(true);
+      } else {
+        inputSectionContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }, 320);
+  });
+
+  chatInput.addEventListener('blur', () => {
+    setTimeout(() => {
+      if (document.activeElement !== chatInput) {
+        document.body.classList.remove('keyboard-open');
+        document.documentElement.style.setProperty('--keyboard-height', '0px');
+      }
+    }, 150);
+  });
+
   chatInput.addEventListener('input', () => {
     chatInput.style.height = 'auto';
     chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
