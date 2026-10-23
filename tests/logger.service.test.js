@@ -9,7 +9,7 @@ test('Logger Service: logs an interaction and creates device record', async () =
   const testDeviceId = 'test-device-' + Date.now();
   const testPlatform = 'Windows / Chrome';
   const userMsg = 'Halo Farrel!';
-  const botReply = 'Iyo santai ae, napa?';
+  const botReply = 'halo juga, ini siapa ya?';
 
   await logInteraction({
     deviceId: testDeviceId,
