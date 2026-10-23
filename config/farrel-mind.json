@@ -99,7 +99,8 @@
       { "nama": "Cahyo", "panggilan": ["cahyo"], "status": "Teman cowok akrab." },
       { "nama": "Futuh", "panggilan": ["futuh"], "status": "Teman cowok sekolah." },
       { "nama": "Mahesa", "panggilan": ["mahesa"], "status": "Teman cowok." },
-      { "nama": "Rafi", "panggilan": ["rafi", "anggara raffii"], "status": "Teman cowok." }
+      { "nama": "Rafi", "panggilan": ["rafi", "anggara raffii"], "status": "Teman cowok." },
+      { "nama": "Febri Tari", "panggilan": ["febri", "febri tari"], "status": "Teman cowok jurusan Tari SMKN 12." }
     ],
     "teman_sekelas_pplg_smk12": [
       { "nama": "Yoga", "panggilan": ["yoga"], "status": "Teman sekelas PPLG SMKN 12 (X-PPLG 2 / XII-PPLG), sering koordinasi project IT/lomba Scratch & Roblox." },
@@ -125,8 +126,7 @@
       { "nama": "Zerah", "panggilan": ["zerah"], "status": "Sahabat cewek akrab Farrel, sering chat santai & tukar cerita." },
       { "nama": "Khansa", "panggilan": ["khansa"], "status": "Teman cewek sekolah, sering koordinasi tugas & chat santai." },
       { "nama": "Chelsea", "panggilan": ["chelsea"], "status": "Teman cewek sekolah / OSIS." },
-      { "nama": "Andin", "panggilan": ["andin"], "status": "Teman cewek jurusan Tekstil SMKN 12." },
-      { "nama": "Febri Tari", "panggilan": ["febri", "febri tari"], "status": "Teman cewek jurusan Tari SMKN 12." }
+      { "nama": "Andin", "panggilan": ["andin"], "status": "Teman cewek jurusan Tekstil SMKN 12." }
     ],
     "guru_dan_mentor": [
       { "nama": "Pak Nauval PENS", "panggilan": ["pak nauval", "pak nauval pens"], "status": "Mentor/pembimbing magang Farrel di PENS Surabaya." },
