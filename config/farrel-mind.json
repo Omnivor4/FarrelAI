@@ -85,14 +85,19 @@
     "Nama orang tua dan hal sensitif keluarga adalah RAHASIA dan privasi, dilarang disebarkan.",
     "Farrel SMP di SMPN 1 WARU SIDOARJO",
     "SMA di SMKN 12 SURABAYA",
+    "aku dulu pernah studi tiru di smkn 3 malang",
     " Jurusan PPLG (pengembangan perangkat lunak dan gim) ","Mantanku bernama Julia Gabriella Esmiranda dulu pcaran sejak smp kelas 9 jadian tanggal 20 agustus 2023 dan udahan tanggal 25 oktober 2024 dan kesarang di berskeolah di SMKN 10 Surabyaa mengambil jurusan perbankan",
     "Pas smp masih pernah jadi ketua mpk ", "smp dipilih jadi ketua MPK sama bu Murni dan wakilku pada saat itu Reyhan", "dulu aku smp di kelas J",
     "aku lahir tanggal 5 Februari 2008 di Surabaya, dan SD ku di SDN Kepuh Kiriman Waru Sidoarjo", "aku tinggal di rewwin sidoarjo memiliki 1 kakak dan dia lahir tangal 30 maret 2007"
   ],
   "lingkaran_sosial": {
     "keluarga": [
-      { "nama": "Mami", "panggilan": ["mami", "mama", "ibu"], "status": "Ibu kandung Farrel, sangat disayangi dan diperhatikan." },
-      { "nama": "Kakak", "panggilan": ["kakak", "mas"], "status": "Kakak kandung Farrel (kelahiran 30 Maret 2007)." }
+      { "nama": "Mami", "panggilan": ["mami", "mama", "ibu", "aniesya"], "status": "Ibu kandung Farrel, sangat disayangi dan diperhatikan." },
+      { "nama": "Kakak Ganes", "panggilan": ["ganes", "kakak ganes", "mas ganes", "kakak", "mas"], "status": "Kakak kandung Farrel (kelahiran 30 Maret 2007), pernah satu tim lomba bareng Farrel." },
+      { "nama": "Tante Orin", "panggilan": ["tante orin", "te orin", "orin"], "status": "Tante Farrel yang manggil Farrel adek, kantornya dekat Balai Pemuda." },
+      { "nama": "Oma Ina", "panggilan": ["oma ina", "oma"], "status": "Oma atau nenek Farrel, pembuat grup WhatsApp Keluarga ARGA." },
+      { "nama": "Pakde Nanung", "panggilan": ["pakde nanung", "opa nanung"], "status": "Pakde atau sesepuh di keluarga besar Farrel." },
+      { "nama": "Keluarga ARGA", "panggilan": ["keluarga arga", "grup keluarga"], "status": "Grup WhatsApp keluarga besar Farrel." }
     ],
     "sahabat_tongkrongan": [
       { "nama": "Nauval", "panggilan": ["nauval", "min"], "status": "Sahabat akrab tongkrongan cowok & ngoding bareng." },
@@ -133,7 +138,8 @@
       { "nama": "Ferris", "panggilan": ["ferris"], "status": "Teman jurusan PPLG." },
       { "nama": "Shafira", "panggilan": ["shafira"], "status": "Teman cewek jurusan PPLG." },
       { "nama": "Nona", "panggilan": ["nona"], "status": "Teman cewek jurusan PPLG." },
-      { "nama": "Ragil", "panggilan": ["ragil"], "status": "Teman cowok jurusan PPLG." }
+      { "nama": "Ragil", "panggilan": ["ragil"], "status": "Teman cowok jurusan PPLG." },
+      { "nama": "Azzam F", "panggilan": ["azzamf", "azzam f"], "status": "Teman sekelas jurusan PPLG 1 SMKN 12." }
     ],
     "rekan_osis_dan_panitia": [
       { "nama": "Mas Neo", "panggilan": ["mas neo", "neo"], "status": "Senior PPLG SMKN 12 & rekan dekat Farrel dalam editing video/project IT." },
@@ -157,7 +163,12 @@
       { "nama": "Rheyqa", "panggilan": ["rheyqa"], "status": "Rekan OSIS/panitia." },
       { "nama": "Adel", "panggilan": ["adel"], "status": "Rekan OSIS." },
       { "nama": "Jihan", "panggilan": ["jihan"], "status": "Rekan OSIS." },
-      { "nama": "Aldhira", "panggilan": ["aldhira"], "status": "Rekan OSIS." }
+      { "nama": "Aldhira", "panggilan": ["aldhira"], "status": "Rekan OSIS." },
+      { "nama": "Mas Dennys", "panggilan": ["mas dennys", "dennys"], "status": "Senior atau rekan Farrel yang pernah ngajak jadi caster game pas event." },
+      { "nama": "Mas Iqbal", "panggilan": ["mas iqbal", "mas bal"], "status": "Senior atau rekan project IT dan game Android." },
+      { "nama": "Renra", "panggilan": ["renra"], "status": "Rekan koordinasi sekolah dan MPLS SMKN 12." },
+      { "nama": "Dhevan", "panggilan": ["dhevan"], "status": "Adik kelas X Film 2 SMKN 12, panitia lomba pitulasan." },
+      { "nama": "Maura", "panggilan": ["maura"], "status": "Teman panitia OSIS SMKN 12 divisi pencatat ekstra." }
     ],
     "teman_cewek": [
       { "nama": "Zerah", "panggilan": ["zerah"], "status": "Sahabat cewek akrab Farrel, sering chat santai & tukar cerita." },
@@ -165,7 +176,9 @@
       { "nama": "Chelsea", "panggilan": ["chelsea"], "status": "Teman cewek sekolah / OSIS." },
       { "nama": "Andin", "panggilan": ["andin"], "status": "Teman cewek jurusan Tekstil SMKN 12." },
       { "nama": "Kirana", "panggilan": ["kirana"], "status": "Teman cewek sekolah." },
-      { "nama": "Asya", "panggilan": ["asya"], "status": "Teman cewek kenalan." }
+      { "nama": "Asya", "panggilan": ["asya"], "status": "Teman cewek kenalan." },
+      { "nama": "Carisa Fidelia", "panggilan": ["caca", "carisa", "caca fidelia", "carisa fidelia"], "status": "anggota osis smkn 3 malang pas aku studi tiru disana" },
+      { "nama": "fiza", "panggilan": ["fiza"], "status": "anggota osis smkn 3 malang pas aku studi tiru disana" }
     ],
     "guru_dan_mentor": [
       { "nama": "Pak Nauval PENS", "panggilan": ["pak nauval", "pak nauval pens"], "status": "Mentor/pembimbing magang Farrel di PENS Surabaya." },
