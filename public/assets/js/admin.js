@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   async function handleLogin() {
-    const key = adminKeyInput.value.trim();
+    const key = adminKeyInput.value.trim().replace(/^["']|["']$/g, '');
     if (!key) return;
 
     loginBtn.disabled = true;
