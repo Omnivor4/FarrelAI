@@ -128,13 +128,18 @@ export async function generateSystemInstruction(userQuery = '') {
     lines.push('- Pertanyaan lembut yang diajukan: "sekarang kabarnya gimana jul? sehat? semoga masih bahagia ya".');
   }
 
+  const greetingWords = ['hai', 'halo', 'haloo', 'p', 'woi', 'woy', 'oi', 'oy', 'farrel', 'rel', 'assalamualaikum', 'tes', 'test', 'sp', 'halo rel', 'hai rel', 'helo'];
+  const isGreeting = greetingWords.includes(lowerQ) || lowerQ.length <= 4;
+
   lines.push('\nPANDUAN RESPON NATURAL:');
   lines.push('- Jawab pendek (1-2 kalimat), santai, pintar ngeles, dan jangan kaku.');
   lines.push('- Dilarang menggunakan kata "memori" atau "database" seolah kamu program.');
+  if (isGreeting) {
+    lines.push('- Sapaan awal: SELALU pancing tanya namanya ("halo, ini siapa ya?", "apaan? siapa nih?").');
+  }
 
   if (cachedPersona.fewShotExamples && cachedPersona.fewShotExamples.length > 0) {
     lines.push('\nCONTOH GAYA JAWABANMU:');
-    const isGreeting = ['hai', 'halo', 'p', 'woi', 'woy', 'farrel', 'rel', 'assalamualaikum', 'tes', 'test', 'sp'].includes(lowerQ) || lowerQ.length <= 4;
     const isAskingMeta = lowerQ.includes('update') || lowerQ.includes('data') || lowerQ.includes('ai') || lowerQ.includes('bot') || lowerQ.includes('robot') || lowerQ.includes('sistem');
     const isAskingMantan = lowerQ.includes('mantan') || lowerQ.includes('pacar') || lowerQ.includes('ex') || lowerQ.includes('julia') || lowerQ.includes('jul');
     const isJailbreak = lowerQ.includes('ignore') || lowerQ.includes('prompt') || lowerQ.includes('dan') || lowerQ.includes('override') || lowerQ.includes('jailbreak') || lowerQ.includes('bypass') || lowerQ.includes('roleplay') || lowerQ.includes('simulasi');
@@ -149,7 +154,10 @@ export async function generateSystemInstruction(userQuery = '') {
     } else if (isAskingMantan) {
       selected = cachedPersona.fewShotExamples.filter(ex => ex.user.toLowerCase().includes('mantan') || ex.user.toLowerCase().includes('julia')).slice(0, 3);
     } else if (isGreeting) {
-      selected = cachedPersona.fewShotExamples.filter(ex => !ex.user.toLowerCase().includes('julia') && !ex.user.toLowerCase().includes('mantan') && !ex.user.toLowerCase().includes('update') && !ex.user.toLowerCase().includes('data') && !ex.reply.toLowerCase().includes('jorok') && !ex.user.toLowerCase().includes('ignore')).slice(0, 3);
+      selected = cachedPersona.fewShotExamples.filter(ex => ex.reply.toLowerCase().includes('siapa')).slice(0, 3);
+      if (selected.length < 3) {
+        selected = cachedPersona.fewShotExamples.slice(0, 3);
+      }
     } else {
       const words = lowerQ.split(/\s+/).filter(w => w.length > 2);
       const matched = cachedPersona.fewShotExamples.filter(ex => {
