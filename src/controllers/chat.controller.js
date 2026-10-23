@@ -26,6 +26,14 @@ export async function handleChatMessage(req, res, next) {
 
     const botReply = await generateReply(cleanMessage, safeHistory);
 
+    if (botReply === 'Yailah token e habis, tunggu besok ya atau ngga nanti malem sapa tau ws reset') {
+      return res.status(429).json({
+        success: false,
+        quotaExhausted: true,
+        error: 'Token harian habis. Coba lagi besok atau nanti malam saat kuota di-reset.'
+      });
+    }
+
     logInteraction({
       deviceId: cleanDeviceId,
       platform: cleanPlatform,
@@ -41,10 +49,10 @@ export async function handleChatMessage(req, res, next) {
     });
   } catch (err) {
     if (/quota|exhausted|rate limit|too many requests|tokens|429/i.test(err.message)) {
-      const fallbackMsg = 'yailah token e habis, tunggu besok ya atau ngga nanti malem sapa tau ws reset';
-      return res.json({
-        success: true,
-        reply: fallbackMsg
+      return res.status(429).json({
+        success: false,
+        quotaExhausted: true,
+        error: 'Token harian habis. Coba lagi besok atau nanti malam saat kuota di-reset.'
       });
     }
     next(err);

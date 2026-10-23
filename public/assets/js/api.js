@@ -16,7 +16,10 @@ export async function sendChatMessage({ message, history = [], deviceId, platfor
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    throw new Error(data.error || `HTTP error ${response.status}`);
+    const error = new Error(data.error || `HTTP error ${response.status}`);
+    error.status = response.status;
+    error.quotaExhausted = Boolean(data.quotaExhausted || response.status === 429);
+    throw error;
   }
 
   return data;

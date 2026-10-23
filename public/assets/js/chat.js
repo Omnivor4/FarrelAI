@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const infoModal = document.getElementById('infoModal');
   const closeModalBtn = document.getElementById('closeModalBtn');
   const brandHomeBtn = document.getElementById('brandHomeBtn');
+  const quotaModal = document.getElementById('quotaModal');
+  const closeQuotaModalBtn = document.getElementById('closeQuotaModalBtn');
+  const quotaBanner = document.getElementById('quotaBanner');
 
   const deviceId = getOrCreateDeviceId();
   const platform = detectPlatform();
@@ -20,6 +23,56 @@ document.addEventListener('DOMContentLoaded', () => {
   let autoScrollActive = true;
   let currentAbortController = null;
   let submitTimestamp = 0;
+
+  function isQuotaExhausted() {
+    const exhausted = localStorage.getItem('farrelai_quota_exhausted') === 'true';
+    const date = localStorage.getItem('farrelai_quota_date');
+    if (!exhausted) return false;
+    if (date !== new Date().toDateString()) {
+      localStorage.removeItem('farrelai_quota_exhausted');
+      localStorage.removeItem('farrelai_quota_date');
+      return false;
+    }
+    return true;
+  }
+
+  function setQuotaExhaustedState(exhausted) {
+    if (exhausted) {
+      localStorage.setItem('farrelai_quota_exhausted', 'true');
+      localStorage.setItem('farrelai_quota_date', new Date().toDateString());
+      if (quotaModal) quotaModal.classList.add('active');
+      if (quotaBanner) quotaBanner.style.display = 'flex';
+      chatInput.disabled = true;
+      chatInput.placeholder = 'Batas token harian sedang habis...';
+      sendBtn.disabled = true;
+    } else {
+      localStorage.removeItem('farrelai_quota_exhausted');
+      localStorage.removeItem('farrelai_quota_date');
+      if (quotaModal) quotaModal.classList.remove('active');
+      if (quotaBanner) quotaBanner.style.display = 'none';
+      chatInput.disabled = false;
+      chatInput.placeholder = 'Tulis pesan untuk Farrel di sini...';
+      sendBtn.disabled = false;
+    }
+  }
+
+  if (isQuotaExhausted()) {
+    setQuotaExhaustedState(true);
+  }
+
+  if (closeQuotaModalBtn) {
+    closeQuotaModalBtn.addEventListener('click', () => {
+      if (quotaModal) quotaModal.classList.remove('active');
+    });
+  }
+
+  if (quotaModal) {
+    quotaModal.addEventListener('click', (e) => {
+      if (e.target === quotaModal) {
+        quotaModal.classList.remove('active');
+      }
+    });
+  }
 
   function getScrollPosition() {
     return Math.max(
@@ -157,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       sendBtn.classList.remove('is-generating');
       sendBtn.setAttribute('aria-label', 'Kirim Pesan');
-      if (chatInput.disabled) {
+      if (chatInput.disabled || isQuotaExhausted()) {
         sendBtn.disabled = true;
       } else {
         sendBtn.disabled = false;
@@ -166,6 +219,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function handleSubmit() {
+    if (isQuotaExhausted()) {
+      setQuotaExhaustedState(true);
+      return;
+    }
     const text = chatInput.value.trim();
     if (!text || isGenerating) return;
 
@@ -247,12 +304,20 @@ document.addEventListener('DOMContentLoaded', () => {
       const typingIndicator = botRow.querySelector('.typing-indicator');
       if (typingIndicator) typingIndicator.remove();
       typingCursor.style.display = 'inline-block';
+
+      if (err.quotaExhausted || err.status === 429 || /quota|exhausted|rate limit|too many requests|tokens|429/i.test(err.message)) {
+        botRow.remove();
+        if (conversationHistory.length > 0 && conversationHistory[conversationHistory.length - 1].role === 'user') {
+          conversationHistory.pop();
+        }
+        setQuotaExhaustedState(true);
+        return;
+      }
+
       if (err.name === 'AbortError' || currentAbortController?.signal?.aborted) {
         if (!bubbleContent.textContent.trim()) {
           botRow.remove();
         }
-      } else if (/quota|exhausted|rate limit|too many requests|tokens|429/i.test(err.message)) {
-        bubbleContent.textContent = 'yailah token e habis, tunggu besok ya atau ngga nanti malem sapa tau ws reset';
       } else {
         bubbleContent.textContent = `error: ${err.message || 'gagal mengirim pesan.'}`;
       }
@@ -262,7 +327,9 @@ document.addEventListener('DOMContentLoaded', () => {
       typingCursor.remove();
       isGenerating = false;
       currentAbortController = null;
-      updateSendButtonState(false);
+      if (!isQuotaExhausted()) {
+        updateSendButtonState(false);
+      }
       if (autoScrollActive) {
         scrollToBottom(true);
       }

@@ -518,6 +518,113 @@
   transform: translateY(-1px);
 }
 
+.quota-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 300;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.quota-overlay.active {
+  display: flex;
+}
+
+.quota-card {
+  background: #232328;
+  border: 1px solid rgba(229, 138, 92, 0.25);
+  border-radius: 24px;
+  max-width: 440px;
+  width: 100%;
+  padding: 34px 28px 28px;
+  text-align: center;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+  animation: modalPop 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.quota-badge {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: rgba(229, 138, 92, 0.16);
+  color: #e58a5c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 18px;
+}
+
+.quota-badge svg {
+  width: 28px;
+  height: 28px;
+}
+
+.quota-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 10px;
+  letter-spacing: -0.3px;
+}
+
+.quota-desc {
+  font-size: 14px;
+  color: #a8a8b0;
+  line-height: 1.6;
+  margin-bottom: 22px;
+}
+
+.quota-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.quota-close-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border-radius: 12px;
+  padding: 10px 22px;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.quota-close-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.quota-persistent-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(229, 138, 92, 0.12);
+  border: 1px solid rgba(229, 138, 92, 0.3);
+  color: #f6ad55;
+  border-radius: 12px;
+  padding: 8px 16px;
+  margin-bottom: 10px;
+  font-size: 12.5px;
+  font-weight: 500;
+  text-align: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.quota-persistent-banner svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }

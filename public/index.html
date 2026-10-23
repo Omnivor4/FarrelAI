@@ -41,6 +41,14 @@
       </section>
 
       <section class="input-section-container" id="inputSectionContainer">
+        <div class="quota-persistent-banner" id="quotaBanner" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span>Batas token harian habis. Reset sekitar pukul 14.00–15.00 WIB.</span>
+        </div>
+
         <div class="chat-input-pill">
           <textarea 
             id="chatInput" 
@@ -83,6 +91,24 @@
           <p style="margin-bottom: 0; font-size: 13px; color: var(--text-secondary); line-height: 1.5;">
             Semua interaksi disimpan secara terorganisir ke database/log sistem untuk keperluan pemantauan aktivitas chat.
           </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="quota-overlay" id="quotaModal">
+      <div class="quota-card">
+        <div class="quota-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+        </div>
+        <h3 class="quota-title">Batas Token Habis</h3>
+        <p class="quota-desc">
+          Farrel lagi istirahat dulu ya bro. Batas kuota harian telah tercapai dan akan di-reset otomatis setiap hari (sekitar pukul 14.00 – 15.00 WIB).
+        </p>
+        <div class="quota-actions">
+          <button type="button" class="quota-close-btn" id="closeQuotaModalBtn">Lihat Riwayat Chat</button>
         </div>
       </div>
     </div>
