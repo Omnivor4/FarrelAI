@@ -349,7 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (typingIndicator) typingIndicator.remove();
       typingCursor.style.display = 'inline-block';
 
-      await streamText(bubbleContent, reply, 12, currentAbortController.signal);
+      await streamText(bubbleContent, reply, 8, currentAbortController.signal);
 
       if (currentAbortController?.signal?.aborted) {
         if (conversationHistory.length > 0 && conversationHistory[conversationHistory.length - 1].role === 'model') {

@@ -62,8 +62,6 @@ export async function logInteraction({ deviceId, platform, userMessage, botReply
     : 'anon-device';
   const safePlatform = typeof platform === 'string' ? platform.slice(0, 80) : 'Web Browser';
 
-  const localResult = await localLogInteraction({ deviceId: safeDeviceId, platform: safePlatform, userMessage, botReply });
-
   const isTest = (
     process.env.NODE_ENV === 'test' ||
     safeDeviceId.startsWith('test-') ||
@@ -72,7 +70,7 @@ export async function logInteraction({ deviceId, platform, userMessage, botReply
   );
 
   if (isTest) {
-    return localResult;
+    return await localLogInteraction({ deviceId: safeDeviceId, platform: safePlatform, userMessage, botReply });
   }
 
   if (firestoreDb) {
@@ -95,12 +93,13 @@ export async function logInteraction({ deviceId, platform, userMessage, botReply
           timestamp: now
         })
       ]);
+      return { success: true };
     } catch (err) {
       console.warn('[Firebase Firestore write warning]', err.message);
     }
   }
 
-  return localResult;
+  return await localLogInteraction({ deviceId: safeDeviceId, platform: safePlatform, userMessage, botReply });
 }
 
 export async function getDevices() {

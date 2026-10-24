@@ -130,8 +130,10 @@ function getRotatedKeys(keys) {
 
 export async function generateReply(userMessage, chatHistory = []) {
   const allApiKeys = getAvailableApiKeys();
-  const rawModel = process.env.GEMINI_MODEL?.trim() || DEFAULT_MODEL;
-  let model = DEPRECATED_OR_PAID.includes(rawModel) ? DEFAULT_MODEL : rawModel;
+  const rawModel = process.env.GEMINI_MODEL?.trim();
+  const preferredModel = (rawModel && rawModel !== 'gemini-3.5-flash' && !DEPRECATED_OR_PAID.includes(rawModel))
+    ? rawModel
+    : DEFAULT_MODEL;
 
   if (allApiKeys.length === 0) {
     return 'waduh bro, API key belum dipasang nih di file .env. masukin dulu GEMINI_API_KEY biar bisa ngobrol wkwk.';
@@ -139,7 +141,7 @@ export async function generateReply(userMessage, chatHistory = []) {
 
   const systemPrompt = await generateSystemInstruction(userMessage, chatHistory);
   const payload = buildGeminiPayload(userMessage, chatHistory, systemPrompt);
-  const candidateModels = [model, ...FREE_MODELS.filter(m => m !== model)];
+  const candidateModels = [preferredModel, ...FREE_MODELS.filter(m => m !== preferredModel)];
 
   const apiKeys = getRotatedKeys(allApiKeys);
   let quotaExhausted = false;
@@ -159,7 +161,8 @@ export async function generateReply(userMessage, chatHistory = []) {
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${currentApiKey}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
+          signal: typeof AbortSignal?.timeout === 'function' ? AbortSignal.timeout(6000) : undefined
         });
 
         if (!response.ok) {
